@@ -1,0 +1,107 @@
+﻿<deadlock>
+ <victim-list>
+  <victimProcess id="process2669dd708c8" />
+ </victim-list>
+ <process-list>
+  <process id="process2669dd708c8" taskpriority="10" logused="0" waitresource="PAGE: 9:1:331 " waittime="708" ownerId="447599" transactionname="RebalanceSpaces" lasttranstarted="2018-05-10T16:13:16.740" XDES="0x26691ceaf20" lockMode="X" schedulerid="2" kpid="5396" status="suspended" spid="58" sbid="0" ecid="0" priority="10" trancount="1" lastbatchstarted="2018-05-10T16:13:14.623" lastbatchcompleted="2018-05-10T16:13:14.617" lastattention="1900-01-01T00:00:00.617" clientapp="Microsoft SQL Server Management Studio - Query" hostname="JDARNELL6540W10" hostpid="232" loginname="JSWCO\jdarnell" isolationlevel="read committed (2)" xactid="447597" currentdb="9" currentdbname="DeadlockTest" lockTimeout="4294967295" clientoption1="673187936" clientoption2="390200">
+   <executionStack>
+    <frame procname="adhoc" line="42" stmtstart="2310" stmtend="2606" sqlhandle="0x02000000950a840416598023aece06618e94ac51386296500000000000000000000000000000000000000000">
+unknown    </frame>
+   </executionStack>
+   <inputbuf>
+USE DeadlockTest;
+
+SET NOCOUNT ON;
+SET DEADLOCK_PRIORITY 10;
+
+DECLARE @anotherField INT = 0;
+DECLARE @fragmentationAchieved BIT = 0
+
+DECLARE @databaseId as smallint = DB_ID(N'DeadlockTest');
+DECLARE @objectId as INT = OBJECT_ID(N'dbo.TableWithFragmentedIndex');
+DECLARE @indexId as SMALLINT = 
+	(SELECT ind.index_id 
+	 FROM sys.indexes ind 
+	 WHERE ind.[name] = 'IX_TableWithFragmentedIndex_AnotherField');
+
+-- Run inserts and deletes until index fragmentation exceeds 50%
+WHILE (@fragmentationAchieved &lt;&gt; 1)
+BEGIN
+	INSERT INTO TableWithFragmentedIndex (AnotherField) 
+	VALUES (@anotherField);
+	
+	IF @anotherField % 5 = 0
+	BEGIN
+		DELETE TableWithFragmentedIndex WHERE Id = (@anotherField - 2);
+		DELETE TableWithFragmentedIndex WHERE Id = (@anotherField - 3);
+	END
+
+	IF (SELECT stat.[avg_fragmentation_in_percent]
+	FROM sys.dm_db_index_physical_stats 
+		(@databaseId, @objectId, @indexId, NULL, NULL) AS stat
+		INNER JOIN sys.indexes AS i 
+			ON stat.[object_id] = i.[object_id] 
+			AND sta   </inputbuf>
+  </process>
+  <process id="process26696853c28" taskpriority="10" logused="0" waitresource="PAGE: 9:1:330 " waittime="708" ownerId="447438" transactionname="SELECT" lasttranstarted="2018-05-10T16:13:16.730" XDES="0x2668df25a40" lockMode="IS" schedulerid="2" kpid="18472" status="suspended" spid="55" sbid="0" ecid="0" priority="-10" trancount="0" lastbatchstarted="2018-05-10T16:13:05.603" lastbatchcompleted="2018-05-10T16:13:05.603" lastattention="2018-05-10T16:12:51.267" clientapp="Microsoft SQL Server Management Studio - Query" hostname="JDARNELL6540W10" hostpid="232" loginname="JSWCO\jdarnell" isolationlevel="read committed (2)" xactid="447438" currentdb="9" currentdbname="DeadlockTest" lockTimeout="4294967295" clientoption1="673187936" clientoption2="390200">
+   <executionStack>
+    <frame procname="adhoc" line="8" stmtstart="336" stmtend="410" sqlhandle="0x020000008ab6691a1710d99fdcdeb82c3d84751bbe4b0f6b0000000000000000000000000000000000000000">
+unknown    </frame>
+   </executionStack>
+   <inputbuf>
+
+-- Make sure to go to Query -&gt; Query Options -&gt; Results -&gt; check "Discard 
+-- results after execution"
+SET NOCOUNT ON;
+SET DEADLOCK_PRIORITY -10;
+
+WHILE 1 = 1
+	SELECT * FROM TableWithFragmentedIndex;
+
+-- Run the code below in a separate window
+
+--USE DeadlockTest;
+
+--SET NOCOUNT ON;
+--SET DEADLOCK_PRIORITY 10;
+
+--DECLARE @anotherField INT = 0;
+--DECLARE @fragmentationAchieved BIT = 0
+
+--DECLARE @databaseId as smallint = DB_ID(N'DeadlockTest');
+--DECLARE @objectId as INT = OBJECT_ID(N'dbo.TableWithFragmentedIndex');
+--DECLARE @indexId as SMALLINT = (SELECT ind.index_id FROM sys.indexes ind WHERE ind.[name] = 'IX_TableWithFragmentedIndex_AnotherField');
+
+--WHILE (@fragmentationAchieved &lt;&gt; 1)
+--BEGIN
+
+--	INSERT INTO TableWithFragmentedIndex (AnotherField) VALUES (@anotherField);
+	
+--	IF @anotherField % 5 = 0
+--	BEGIN
+--		DELETE TableWithFragmentedIndex WHERE Id = (@anotherField - 2);
+--		DELETE TableWithFragmentedIndex WHERE Id = (@anotherField - 3);
+--	END
+
+--	IF (SELECT stat   </inputbuf>
+  </process>
+ </process-list>
+ <resource-list>
+  <pagelock fileid="1" pageid="331" dbid="9" subresource="FULL" objectname="DeadlockTest.dbo.TableWithFragmentedIndex" id="lock26691ed4e80" mode="IS" associatedObjectId="72057594041335808">
+   <owner-list>
+    <owner id="process26696853c28" mode="IS" />
+   </owner-list>
+   <waiter-list>
+    <waiter id="process2669dd708c8" mode="X" requestType="wait" />
+   </waiter-list>
+  </pagelock>
+  <pagelock fileid="1" pageid="330" dbid="9" subresource="FULL" objectname="DeadlockTest.dbo.TableWithFragmentedIndex" id="lock2668a9f1500" mode="X" associatedObjectId="72057594041335808">
+   <owner-list>
+    <owner id="process2669dd708c8" mode="X" />
+   </owner-list>
+   <waiter-list>
+    <waiter id="process26696853c28" mode="IS" requestType="wait" />
+   </waiter-list>
+  </pagelock>
+ </resource-list>
+</deadlock>

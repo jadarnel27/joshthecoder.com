@@ -1,0 +1,93 @@
+﻿<deadlock>
+  <victim-list>
+    <victimProcess id="process234fee23468" />
+  </victim-list>
+  <process-list>
+    <process id="process234fee23468" taskpriority="0" logused="10000" waittime="1072" schedulerid="2" kpid="8444" status="suspended" spid="54" sbid="0" ecid="3" priority="0" trancount="0" lastbatchstarted="2018-06-28T23:23:50.867" lastbatchcompleted="2018-06-28T23:23:50.863" lastattention="1900-01-01T00:00:00.863" clientapp="Microsoft SQL Server Management Studio - Query" hostname="JDARNELL6540W10" hostpid="552" isolationlevel="read committed (2)" xactid="34063" currentdb="5" lockTimeout="4294967295" clientoption1="671090784" clientoption2="390200">
+      <executionStack>
+        <frame procname="adhoc" line="3" stmtstart="44" stmtend="204" sqlhandle="0x020000003cefbc3a56742369faa556767df59fe62a16f0940000000000000000000000000000000000000000">
+unknown    </frame>
+      </executionStack>
+      <inputbuf>
+BEGIN TRANSACTION;
+
+SELECT TOP 10000
+	m.message_id, m.[text]
+INTO SomeNewTable
+FROM sys.messages m   </inputbuf>
+    </process>
+    <process id="process234ff6cf468" taskpriority="0" logused="10000" waittime="1072" schedulerid="1" kpid="10392" status="suspended" spid="54" sbid="0" ecid="5" priority="0" trancount="0" lastbatchstarted="2018-06-28T23:23:50.867" lastbatchcompleted="2018-06-28T23:23:50.863" lastattention="1900-01-01T00:00:00.863" clientapp="Microsoft SQL Server Management Studio - Query" hostname="JDARNELL6540W10" hostpid="552" isolationlevel="read committed (2)" xactid="34063" currentdb="5" lockTimeout="4294967295" clientoption1="671090784" clientoption2="390200">
+      <executionStack>
+        <frame procname="adhoc" line="3" stmtstart="44" stmtend="204" sqlhandle="0x020000003cefbc3a56742369faa556767df59fe62a16f0940000000000000000000000000000000000000000">
+unknown    </frame>
+      </executionStack>
+      <inputbuf>
+BEGIN TRANSACTION;
+
+SELECT TOP 10000
+	m.message_id, m.[text]
+INTO SomeNewTable
+FROM sys.messages m   </inputbuf>
+    </process>
+    <process id="process234fed404e8" taskpriority="0" logused="42096" waitresource="PAGE: 5:1:336 " waittime="1072" ownerId="34063" transactionname="user_transaction" lasttranstarted="2018-06-28T23:23:50.870" XDES="0x2350c369c70" lockMode="S" schedulerid="3" kpid="15672" status="suspended" spid="54" sbid="0" ecid="1" priority="0" trancount="0" lastbatchstarted="2018-06-28T23:23:50.867" lastbatchcompleted="2018-06-28T23:23:50.863" lastattention="1900-01-01T00:00:00.863" clientapp="Microsoft SQL Server Management Studio - Query" hostname="JDARNELL6540W10" hostpid="552" isolationlevel="read committed (2)" xactid="34063" currentdb="5" lockTimeout="4294967295" clientoption1="671090784" clientoption2="390200">
+      <executionStack>
+        <frame procname="adhoc" line="3" stmtstart="44" stmtend="204" sqlhandle="0x020000003cefbc3a56742369faa556767df59fe62a16f0940000000000000000000000000000000000000000">
+unknown    </frame>
+      </executionStack>
+      <inputbuf>
+BEGIN TRANSACTION;
+
+SELECT TOP 10000
+	m.message_id, m.[text]
+INTO SomeNewTable
+FROM sys.messages m   </inputbuf>
+    </process>
+    <process id="process234fed22ca8" taskpriority="0" logused="42096" waitresource="PAGE: 5:1:336 " waittime="1072" ownerId="34063" transactionname="user_transaction" lasttranstarted="2018-06-28T23:23:50.870" XDES="0x2350c215980" lockMode="S" schedulerid="4" kpid="19400" status="suspended" spid="54" sbid="0" ecid="4" priority="0" trancount="0" lastbatchstarted="2018-06-28T23:23:50.867" lastbatchcompleted="2018-06-28T23:23:50.863" lastattention="1900-01-01T00:00:00.863" clientapp="Microsoft SQL Server Management Studio - Query" hostname="JDARNELL6540W10" hostpid="552" isolationlevel="read committed (2)" xactid="34063" currentdb="5" lockTimeout="4294967295" clientoption1="671090784" clientoption2="390200">
+      <executionStack>
+        <frame procname="adhoc" line="3" stmtstart="44" stmtend="204" sqlhandle="0x020000003cefbc3a56742369faa556767df59fe62a16f0940000000000000000000000000000000000000000">
+unknown    </frame>
+      </executionStack>
+      <inputbuf>
+BEGIN TRANSACTION;
+
+SELECT TOP 10000
+	m.message_id, m.[text]
+INTO SomeNewTable
+FROM sys.messages m   </inputbuf>
+    </process>
+  </process-list>
+  <resource-list>
+    <exchangeEvent id="Pipe234fa0bcd80" WaitType="e_waitPipeGetRow" nodeId="2">
+      <owner-list>
+        <owner id="process234ff6cf468" />
+      </owner-list>
+      <waiter-list>
+        <waiter id="process234fee23468" />
+      </waiter-list>
+    </exchangeEvent>
+    <exchangeEvent id="Pipe234fa0bcf80" WaitType="e_waitPipeNewRow" nodeId="2">
+      <owner-list>
+        <owner id="process234fed22ca8" />
+      </owner-list>
+      <waiter-list>
+        <waiter id="process234ff6cf468" />
+      </waiter-list>
+    </exchangeEvent>
+    <pagelock fileid="1" pageid="336" dbid="5" subresource="FULL" objectname="unknown" id="lock234ff366700" mode="X" associatedObjectId="72057594043105280">
+      <owner-list>
+        <owner id="process234fee23468" mode="X" />
+      </owner-list>
+      <waiter-list>
+        <waiter id="process234fed404e8" mode="S" requestType="wait" />
+      </waiter-list>
+    </pagelock>
+    <pagelock fileid="1" pageid="336" dbid="5" subresource="FULL" objectname="unknown" id="lock234ff366700" mode="X" associatedObjectId="72057594043105280">
+      <owner-list>
+        <owner id="process234fed404e8" mode="S" requestType="wait" />
+      </owner-list>
+      <waiter-list>
+        <waiter id="process234fed22ca8" mode="S" requestType="wait" />
+      </waiter-list>
+    </pagelock>
+  </resource-list>
+</deadlock>
