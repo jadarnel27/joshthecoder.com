@@ -110,6 +110,6 @@ Changing it back to the original form, with the null replacement, avoids the err
 
 When writing ORM code that's going to be converted into T-SQL, resist the urge to do this defensive coding.  It's not necessary, and causes confusing (and potentially hard-to-tune) T-SQL to be generated.
 
-I hop[e this helps relieve a little bit of ORM pain for you folks out there!
+I hope this helps relieve a little bit of ORM pain for you folks out there!
 
 [1]: https://blogs.msdn.microsoft.com/dotnet/2017/11/15/nullable-reference-types-in-csharp/
