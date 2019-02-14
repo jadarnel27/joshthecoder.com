@@ -107,7 +107,7 @@ Being an enterprising young developer, I asked the DBA team create this index fo
     ON dbo.StackOverflowUsers (Reputation DESC)
     INCLUDE (DisplayName);
 
-![screenshot of execution plan with new index][3]
+![screenshot of execution plan with new index][4]
 
 No sort, just a scan and a top!  
 
