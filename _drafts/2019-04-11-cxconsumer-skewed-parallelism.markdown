@@ -235,7 +235,7 @@ There is a CXCONSUMER wait that accumulates on the coordinator thread from 2019-
 
 ## Look Out for CXCONSUMER
 
-This wait type can definitely be a sign that something strange is going on in your queries.  Look out for skewed parallelism - particularly in cases like this, where a parallel exchange operator is active for a long time waiting on a long-runnig operator to send it data.  Please let me know if you see other problematic queries that have high CXCONSUMER waits as well, I'd be interested in checking them out!
+This wait type can definitely be a sign that something strange is going on in your queries.  Look out for skewed parallelism - particularly in cases like this, where a parallel exchange operator is active for a long time waiting on a long-running operator to send it data.  Please let me know if you see other problematic queries that have high CXCONSUMER waits as well, I'd be interested in checking them out!
 
 [1]: https://www.brentozar.com/archive/2018/07/cxconsumer-is-harmless-not-so-fast-tiger/
 [2]: https://dba.stackexchange.com/q/226366/6141
