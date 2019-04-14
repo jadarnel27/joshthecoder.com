@@ -1,8 +1,9 @@
 ---
-layout: post
+layout: series
 title:  "SSDT problems: Deploying the Same Change Over and Over"
 date:   2018-07-12 13:00:00 -0400
 categories: 
+tags: [SSDT Problems]
 ---
 Sometimes I tell SQL Server to do one thing, and instead it does whatever it feels like.
 

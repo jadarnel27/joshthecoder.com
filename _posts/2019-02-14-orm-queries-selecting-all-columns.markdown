@@ -1,7 +1,8 @@
 ---
-layout: post
+layout: series
 title:  "ORM Queries: SELECTing All Columns"
 categories: 
+tags: [ORM Queries]
 ---
 
 ## Not Exactly SELECT *

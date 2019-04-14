@@ -1,8 +1,9 @@
 ---
-layout: post
+layout: series
 title:  "SSDT problems: Table Rebuilds"
 date:   2018-08-14 00:30:00 -0400
 categories: 
+tags: [SSDT Problems]
 ---
 Tables rebuilds can wreak havoc on your database.  So what are they, why are they bad, and what can you do about them?
 

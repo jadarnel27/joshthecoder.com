@@ -2,6 +2,7 @@
 layout: post
 title:  "ORM Queries: Too Much NULL Checking"
 categories: 
+tags: [ORM Queries]
 ---
 
 ## About ORMs
