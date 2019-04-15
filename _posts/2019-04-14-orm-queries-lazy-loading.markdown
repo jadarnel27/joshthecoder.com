@@ -59,11 +59,13 @@ Each time we access `comment.User` inside that loop, Entity Framework sends a qu
 
 So that innocuous code executes 101 queries.  I've heard this called the "N+1 query problem" by [Oren Eini (AKA Ayende)][2].  It's also one of the warnings emitted by [MiniProfiler][3], a lightweight profiling tool created by the folks at Stack Overflow.
 
-## Y Tho
+It's also called "being chatty."  Don't be chatty.
+
+## y tho
 
 This is called Lazy Loading, and is the default mode of fetching related entities and child collections in Entity Framework (and NHibernate).
 
-I think this is actually a reasonable default, since many times you are probably not accessing those entities at all.  Imagine if everytime you searched for a User in EF if every Comment that user ever left was also retrieved - just in case you need it.  That's...not ideal.
+I think this is actually a reasonable default, since many times you are probably not accessing those entities at all.  If every time I searched for a User in EF, it also loaded every Comment that user ever left - just in case I needed it - I'd be a little peeved.
 
 ## What To Do About It
 
@@ -95,6 +97,8 @@ Note that we could, and should, define a projection in order to avoid [selecting
 ## Do This Up Front
 
 This requires some extra legwork from developers, but try to always think about what data your ORM query will be using.  If there are related entities involved, make sure to define that requirement with `Include`.
+
+This is the kind of problem that gets much, much worse over time.  It's not terribly painful to have 100 rapid-fire queries like this - but what about 1,000?  10,000?  You get the idea.  Better to handle this one up front - it's just one method call ;)
 
 Happy ORMing!
 
