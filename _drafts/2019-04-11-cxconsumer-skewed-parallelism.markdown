@@ -19,7 +19,7 @@ The common theme was skewed parallelism, so I decided to try and learn a little 
 
 ## A Bad Query™
 
-Some might describe this query as not very realistic:
+I'm working with the 10GB, 2010 version of the Stack Overflow database.  Some might describe this query as not very realistic:
 
     SELECT * 
     FROM dbo.PostTypes pt
@@ -109,7 +109,7 @@ This is the callstack captured with that event:
     sqlmin.dll!CRiLeaf::FIdentifiersOnly+0xe11
 
 
-Since this fired at 51.900, and had a duration of 2151, I should be able to find the wait_info entry at 49.749.  I found one for the same system_thread_id and task_address at 49.750, which is just be due to the weirdness of datetime rounding in SQL Server:
+Since this fired at 51.900, and had a duration of 2151, I should be able to find the wait_info entry at 49.749.  I found one for the same system_thread_id and task_address at 49.750 (the difference is due to the way the `datetime` data type rounds to the nearest .000, .003, or .007 seconds):
 
 |ts|event_name|wait_type|duration|signal_duration|system_thread_id|scheduler_id|worker_address|task_address|
 |--|----------|---------|--------|---------------|----------------|------------|--------------|------------|
