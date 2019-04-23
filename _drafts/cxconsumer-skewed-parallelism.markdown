@@ -54,7 +54,9 @@ What makes this query so bad?
 
 I'm forcing the join type, and implicitly forcing the join order, resulting in only one row coming into the outer input of the initial nested loops join.  Even though the query is parallel, this causes all the matching rows to land one one thread - the thread with the single "TagWiki" row in PostTypes.
 
-Tag Wikis are one of the least common types of posts, totaling 507 rows.  But there are no indexes to support this query, so all 3.7 million rows in the Posts table are scanned (which is also done serially, despite being a parallel scan).
+Tag Wikis are one of the least common types of posts, totaling 507 rows.  But there are no indexes to support this query, so all 3.7 million rows in the Posts table are scanned.  Fortunately, the table is only scanned once, because only one of the four threads gets a row that causes the inner side of the nested loops join to run.  
+
+*The other three threads running in that parallel branch (between the left side of the Distribute Streams and the right side of the Repartition Streams) are shut down without really getting to do anything.*
 
 So where does CXCONSUMER come into play here?
 
@@ -83,33 +85,9 @@ Parsing through that event file with terrible XML queries, I can see long CXCONS
 
 This is the callstack captured with that event:
 
-    sqldk.dll!SOS_DispatcherBase::GetTrack+0xc56c 
-    sqldk.dll!SOS_DispatcherBase::GetTrack+0xc47e 
-    sqldk.dll!SOS_DispatcherBase::GetTrack+0xc25a 
-    sqldk.dll!SOS_DispatcherBase::GetTrack+0xc2be 
-    sqldk.dll!SOS_DispatcherBase::GetTrack+0x7f6c 
-    sqldk.dll!SOS_Scheduler::PromotePendingTask+0x204 
-    sqldk.dll!SOS_Task::PostWait+0x5f 
-    sqldk.dll!SOS_Scheduler::Suspend+0xb15 
-    sqldk.dll!SOS_PartitionedHeap::Free+0x408 
-    sqlmin.dll!CRiLeaf::FIdentifiersOnly+0x109d 
-    sqlmin.dll!AutoInstallSubprocessMgr::~AutoInstallSubprocessMgr+0x26be 
-    sqlmin.dll!AutoInstallSubprocessMgr::~AutoInstallSubprocessMgr+0x25fd 
-    sqlmin.dll!AutoInstallSubprocessMgr::~AutoInstallSubprocessMgr+0x24cc 
-    sqlmin.dll!SubprocEntrypoint+0x62f0 
-    sqlmin.dll!BPool::Discard+0x5acb 
-    sqlmin.dll!TableInfo::TableInfo+0x36ed 
-    sqlmin.dll!BPool::Discard+0x5acb 
-    sqlmin.dll!AutoInstallSubprocessMgr::~AutoInstallSubprocessMgr+0xeef 
-    sqlmin.dll!AutoInstallSubprocessMgr::~AutoInstallSubprocessMgr+0x128a 
-    sqlmin.dll!AutoInstallSubprocessMgr::~AutoInstallSubprocessMgr+0x3dde 
-    sqlmin.dll!BPool::Discard+0x5d41 
-    sqlmin.dll!DatasetSession::Create+0x4a51 
-    sqlmin.dll!SubprocEntrypoint+0x66c6 
-    sqlmin.dll!CRiLeaf::FIdentifiersOnly+0xe11
+// TODO: fix this callstack
 
-
-Since this fired at 51.900, and had a duration of 2151, I should be able to find the wait_info entry at 49.749.  I found one for the same system_thread_id and task_address at 49.750 (the difference is due to the way the `datetime` data type rounds to the nearest .000, .003, or .007 seconds):
+Since this fired at 51.900, and had a duration of 2151, I should be able to find the wait_info entry at 49.749.  I found one for the same system_thread_id and task_address at 49.750 (the difference is due to the way the `datetime` data type [rounds to the nearest .000, .003, or .007 seconds][8]):
 
 |ts|event_name|wait_type|duration|signal_duration|system_thread_id|scheduler_id|worker_address|task_address|
 |--|----------|---------|--------|---------------|----------------|------------|--------------|------------|
@@ -117,38 +95,13 @@ Since this fired at 51.900, and had a duration of 2151, I should be able to find
 
 This is the callstack captured with that event:
 
-    sqldk.dll!SOS_DispatcherBase::GetTrack+0xc56c 
-    sqldk.dll!SOS_DispatcherBase::GetTrack+0xc47e 
-    sqldk.dll!SOS_DispatcherBase::GetTrack+0xc25a 
-    sqldk.dll!SOS_DispatcherBase::GetTrack+0xc2be 
-    sqldk.dll!SOS_DispatcherBase::GetTrack+0x7d05 
-    sqldk.dll!SOS_Task::PreWait+0x136 
-    sqldk.dll!SOS_Scheduler::Suspend+0xae1 
-    sqldk.dll!SOS_PartitionedHeap::Free+0x408 
-    sqlmin.dll!CRiLeaf::FIdentifiersOnly+0x109d 
-    sqlmin.dll!AutoInstallSubprocessMgr::~AutoInstallSubprocessMgr+0x26be 
-    sqlmin.dll!AutoInstallSubprocessMgr::~AutoInstallSubprocessMgr+0x25fd 
-    sqlmin.dll!AutoInstallSubprocessMgr::~AutoInstallSubprocessMgr+0x24cc 
-    sqlmin.dll!SubprocEntrypoint+0x62f0 
-    sqlmin.dll!BPool::Discard+0x5acb 
-    sqlmin.dll!TableInfo::TableInfo+0x36ed 
-    sqlmin.dll!BPool::Discard+0x5acb 
-    sqlmin.dll!AutoInstallSubprocessMgr::~AutoInstallSubprocessMgr+0xeef 
-    sqlmin.dll!AutoInstallSubprocessMgr::~AutoInstallSubprocessMgr+0x128a 
-    sqlmin.dll!AutoInstallSubprocessMgr::~AutoInstallSubprocessMgr+0x3dde 
-    sqlmin.dll!BPool::Discard+0x5d41 
-    sqlmin.dll!DatasetSession::Create+0x4a51 
-    sqlmin.dll!SubprocEntrypoint+0x66c6 
-    sqlmin.dll!CRiLeaf::FIdentifiersOnly+0xe11 
-    sqlmin.dll!FnProducerThread+0x5c2
-
-I thought it was interesting that FnProducerThread is at the root of this stack, since the wait being registered is CXCONSUMER.  However, this is likely unimportant, since the stack captured is purely dependent on when / where the SQL Server code is designed to fire the XE.
+// TODO: fix this callstack
 
 So I've found one of the tasks generating CXCONSUMER waits.  How can I find out more information about it?
 
 ## Waiting Tasks
 
-Thanks to the suggestion of some New Zealander you've never heard of, I decided to look in `sys.dm_os_waiting_tasks` while this query was running.
+I was advised to look in `sys.dm_os_waiting_tasks` while this query was running to try and get some more details about what was going on.
 
 To do that, I started the code below in another query window right before executing the bad query, and cancelled it when the query was done:
 
@@ -205,7 +158,7 @@ The tid=3 represents thread id 3 in the execution plan.  Threads 1 and 3 only go
 
 [![rows and threads][6]][6]
 
-Using this information, I can create a timeline of waits being registered by threads on the consumer (right) side of the Repartition Streams:
+Using this information, I can create a timeline of waits being registered by threads on the consumer (left) side of the Repartition Streams:
 
 |tid|started|ended|duration|
 |---|-------|-----|--------|
@@ -217,25 +170,23 @@ Using this information, I can create a timeline of waits being registered by thr
 |4|49.7540572|51.5220547|1776|
 |4|51.5260546|51.9660535|Lots of slightly longer waits|
 
-For a more visualized representation, here's a graph!  Each line is a thread, with the Y-axis representing the current CXCONSUMER wait duration at a given time, and the X-axis is time.  This is scoped specifically to node 3, and ignores thread 0 (the coordinator thread).
+For the visual learners, here's a graph!  Each line is a thread, with the Y-axis representing the current CXCONSUMER wait duration at a given time, and the X-axis is time.  This is scoped specifically to the consumer side of node 3.
 
 [![threads and waits][7]][7]
 
-This demonstrates pretty clearly that threads that are attached to the consumer side of the Repartition Streams operator are registering CXCONSUMER waits while waiting on rows from the join operator.  The producer threads are sending rows as quick as they can from scan of the 3.7 million rows in the Posts table, so very few CXPACKET waits are registered.
+This demonstrates pretty clearly that threads that are attached to the consumer side of the Repartition Streams operator are registering CXCONSUMER waits while waiting on packets of rows accumulating on the right side of node 3 to be pushed across to the left side.  The producer threads are sending rows as quickly as they can from scan of the 3.7 million rows in the Posts table, but only a few rows qualify for the join condition.  Thus it takes a long time for full "packets" of rows to build up on the right side of the exchange, and the threads on the left side are left waiting for work to do.
 
-This also demonstrates that CXCONSUMER, in this case, is not benign at all - but a sign that we have a query in need of tuning.
-
-Other CXCONSUMER waits are registered for node 10 (also repartition streams) on all 4 threads from 2019-04-11 02:42:51.9740573 to 2019-04-11 02:42:52.0460541.
+In this case, CXCONSUMER is not benign at all - but a sign that we have a query in need of tuning.  There are several ways to "fix" this weird query.  One option would be to create a unique constraint on the `Type` column of the `dbo.PostTypes` table.
 
 ## Aside: About the Coordinator Thread
 
-There is a very long CXPACKET wait that accumulates on the coordinator thread from 2019-04-11 02:42:49.7460533 until 2019-04-11 02:42:51.9700543 (2224 ms) with a waiterType of "waitForAllOwnersToOpen."  It seems this is accumulating up until all parallel branches in the plan have "started" (for lack of a better term).
+There is a very long CXPACKET wait that accumulates on the coordinator thread from 49.7460533 until 51.9700543 (2,224 ms) with a waiterType of "waitForAllOwnersToOpen."  This is accumulating up until all parallel branches in the plan have "started up."  It feels like this should logically be CXCONSUMER.  Additionally, this specific CXPACKET wait seems harmless (which is funny, since CXPACKER is supposed to be the actionable wait now).
 
-There is a CXCONSUMER wait that accumulates on the coordinator thread from 2019-04-11 02:42:51.9740573 to 2019-04-11 02:42:52.0460541 (71 ms).  This is the same time period where CXCONSUMER threads are being registered node 10.  I'm speculating here, but it seems like, once all parallel branches have started, the coordinator thread registers CXCONSUMER until parallelism ends.
+There is a CXCONSUMER wait that accumulates on the coordinator thread from 51.9740573 to 52.0460541 (71 ms).  This is the same time period where CXCONSUMER threads are being registered at node 10.  This shows that, once all the parallel branches have started up, thread zero acts like any other consumer when waiting on packets of rows at the right side of its Gather Streams operator.
 
 ## Look Out for CXCONSUMER
 
-This wait type can definitely be a sign that something strange is going on in your queries.  Look out for skewed parallelism - particularly in cases like this, where a parallel exchange operator is active for a long time waiting on a long-running operator to send it data.  Please let me know if you see other problematic queries that have high CXCONSUMER waits as well, I'd be interested in checking them out!
+This wait type can definitely be a sign that something strange is going on in your queries.  Look out for skewed parallelism - particularly in cases like this, where a parallel exchange operator is active for a long time waiting on a long-running operator to send it data.
 
 [1]: https://www.brentozar.com/archive/2018/07/cxconsumer-is-harmless-not-so-fast-tiger/
 [2]: https://dba.stackexchange.com/q/226366/6141
@@ -244,3 +195,4 @@ This wait type can definitely be a sign that something strange is going on in yo
 [5]: {{ site.url }}/assets/2019-04-11-parallel-branch.PNG
 [6]: {{ site.url }}/assets/2019-04-11-thread-distribution.PNG
 [7]: {{ site.url }}/assets/2019-04-11-node-3-consumer-waits-by-thread.PNG
+[8]: https://docs.microsoft.com/en-us/sql/t-sql/data-types/datetime-transact-sql?view=sql-server-2017#rounding-of-datetime-fractional-second-precision
