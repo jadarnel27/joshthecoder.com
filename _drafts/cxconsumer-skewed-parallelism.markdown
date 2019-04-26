@@ -5,6 +5,13 @@ categories:
 tags: 
 ---
 
+<style type="text/css">
+    table th, table td {
+        padding: 5px 5px;
+        font-size: 13px;
+    }
+</style>
+
 ## What does CXCONSUMER really mean?
 
 For reference, here's the description from the Microsoft Docs:
@@ -31,20 +38,18 @@ I'm working with the 10GB, 2010 version of the Stack Overflow database.  Some mi
 
 With a warm cache, this takes about 2 seconds on my laptop, and 0 rows are returned.  This is what the wait stats look like on a typical run (from `sys.dm_exec_session_wait_stats`):
 
-|session_id|wait_type|waiting_tasks_count|wait_time_ms|max_wait_time_ms|signal_wait_time_ms|
-|----------|---------|-------------------|------------|----------------|-------------------|
-|53|CXCONSUMER|40294|6576|1116|1159|
-|53|CXPACKET|37856|2379|1141|761|
-|53|MEMORY_ALLOCATION_EXT|10127|16|6|0|
-|53|SOS_SCHEDULER_YIELD|366|1|0|1|
-|53|LATCH_EX|5|0|0|0|
-|53|EXECSYNC|1|0|0|0|
-|53|RESERVED_MEMORY_ALLOCATION_EXT|652|0|0|0|
-|53|SESSION_WAIT_STATS_CHILDREN|1|0|0|0|
+|session_id|wait_type|waiting_tasks_count|wait_time_ms|
+|----------|---------|-------------------|------------|
+|53|CXCONSUMER|40294|6576|
+|53|CXPACKET|37856|2379|
+|53|MEMORY_ALLOCATION_EXT|10127|16|
+|53|SOS_SCHEDULER_YIELD|366|1|
+|53|LATCH_EX|5|0|
+|53|EXECSYNC|1|0|
+|53|RESERVED_MEMORY_ALLOCATION_EXT|652|0|
+|53|SESSION_WAIT_STATS_CHILDREN|1|0|
 
 6.5 seconds of CXCONSUMER waits seems like a lot for a 2 second query at DOP 4.
-
-> Note: adding to the lack of realistic-ness of this query is the fact that I accidentally ran it at compatability level 100.  But I'm just gonna go with it.
 
 ## A Brief Tour of the Execution Plan
 
@@ -57,6 +62,12 @@ I'm forcing the join type, and implicitly forcing the join order, resulting in o
 Tag Wikis are one of the least common types of posts, totaling 507 rows.  But there are no indexes to support this query, so all 3.7 million rows in the Posts table are scanned.  Fortunately, the table is only scanned once, because only one of the four threads gets a row that causes the inner side of the nested loops join to run.  
 
 *The other three threads running in that parallel branch (between the left side of the Distribute Streams and the right side of the Repartition Streams) are shut down without really getting to do anything.*
+
+At this point, I think it's important to note that the query has 3 parallel branches, which I've labeled below:
+
+[![screenshot of labeled branches][9]][9]
+
+If you're not familiar with branches in parallel execution plans, I'd highly recommend this perusing this post from Paul White: [Parallel Execution Plans – Branches and Threads][10]
 
 So where does CXCONSUMER come into play here?
 
@@ -79,23 +90,15 @@ I created this extended events session to capture waits occurring, scoped specif
 
 Parsing through that event file with terrible XML queries, I can see long CXCONSUMER waits in the wait_completed event here:
 
-|ts|event_name|wait_type|duration|signal_duration|system_thread_id|scheduler_id|worker_address|task_address|
-|--|----------|---------|--------|---------------|----------------|------------|--------------|------------|
-|2019-04-11 02:42:51.900|wait_completed|CXCONSUMER|2151|0|10156|2|0x000002895bcfe160|0x00000289da04eca8|
+|ts|event_name|wait_type|duration|task_address|
+|--|----------|---------|--------|------------|
+|2019-04-11 02:42:51.900|wait_completed|CXCONSUMER|2151|0x00000289da04eca8|
 
-This is the callstack captured with that event:
+Since this fired at 51.900, and had a duration of 2151, I should be able to find the wait_info entry at 49.749.  I found one for the same task_address at 49.750 (the difference is due to the way the `datetime` data type [rounds to the nearest .000, .003, or .007 seconds][8]):
 
-// TODO: fix this callstack
-
-Since this fired at 51.900, and had a duration of 2151, I should be able to find the wait_info entry at 49.749.  I found one for the same system_thread_id and task_address at 49.750 (the difference is due to the way the `datetime` data type [rounds to the nearest .000, .003, or .007 seconds][8]):
-
-|ts|event_name|wait_type|duration|signal_duration|system_thread_id|scheduler_id|worker_address|task_address|
-|--|----------|---------|--------|---------------|----------------|------------|--------------|------------|
-|2019-04-11 02:42:49.750|wait_info|CXCONSUMER|0|0|10156|2|0x000002895bcfe160|0x00000289da04eca8|
-
-This is the callstack captured with that event:
-
-// TODO: fix this callstack
+|ts|event_name|wait_type|duration|task_address|
+|--|----------|---------|--------|------------|
+|2019-04-11 02:42:49.750|wait_info|CXCONSUMER|0|0x00000289da04eca8|
 
 So I've found one of the tasks generating CXCONSUMER waits.  How can I find out more information about it?
 
@@ -120,15 +123,15 @@ To do that, I started the code below in another query window right before execut
 
 This produced about 9,000 rows of waiting task information.  The closest CXCONSUMER wait to 49.750 with that task address starts here:
 
-|ts|waiting_task_address|session_id|exec_context_id|wait_duration_ms|wait_type|resource_address|blocking_task_address|blocking_session_id|blocking_exec_context_id|
-|--|--------------------|----------|---------------|----------------|---------|----------------|---------------------|-------------------|------------------------|
-|2019-04-11 02:42:49.7540572|0x00000289DA04ECA8|56|4|5|CXCONSUMER|0x000002883A67B7E0|0x0000028873756CA8|56|7|
+|ts|waiting_task_address|exec_context_id|wait_duration_ms|wait_type|blocking_exec_context_id|
+|--|--------------------|---------------|----------------|---------|----------------|------------------------|
+|2019-04-11 02:42:49.7540572|0x00000289DA04ECA8|4|5|CXCONSUMER|7|
 
 Entries exactly like this continue to show up in the results, with duration increasing all the way to 2151:
 
-|ts|waiting_task_address|session_id|exec_context_id|wait_duration_ms|wait_type|resource_address|blocking_task_address|blocking_session_id|blocking_exec_context_id|
-|--|--------------------|----------|---------------|----------------|---------|----------------|---------------------|-------------------|------------------------|
-|2019-04-11 02:42:51.8980533|0x00000289DA04ECA8|56|4|2151|CXCONSUMER|0x000002883A67B7E0|0x0000028873756CA8|56|7|
+|ts|waiting_task_address|exec_context_id|wait_duration_ms|wait_type|blocking_exec_context_id|
+|--|--------------------|---------------|----------------|---------|------------------------|
+|2019-04-11 02:42:51.8980533|0x00000289DA04ECA8|4|2151|CXCONSUMER|7|
 
 This is definitely the same wait as the one we found in the XE.
 
@@ -146,11 +149,11 @@ The "resource_description" column probably has the most interesting information 
     spilling=false 
     waitingToClose=false
 
-Maybe stating this obvious, but this is a consumer thread, and it needs more data from the producer thread.  So let's zoom in a bit on that part of the plan.
+I may be stating the obvious, but this is a consumer thread, and it needs more data from the producer thread.  So let's zoom in a bit on that part of the plan.
 
 ## Waiting for Rows to Repartition
 
-Node ID 3 in the execution plan is the Repartition Streams operator to the left of the parallel nested loops join.  The "Actual Elapsed Time" for that operator in the execution plan is 2220 ms.  Note that this is cumulative up to this point in the plan, so this roughly adds up to the end of the waits we're discussing.
+Node ID 3 in the execution plan is the Repartition Streams operator to the left of the parallel nested loops join.  Since this is consumer wait, this task represents one of the 4 threads running the branch labeled "Branch 1" - which is running on the left side of node 3.
 
 [![zoomed in portion of execution plan][5]][5]
 
@@ -174,15 +177,17 @@ For the visual learners, here's a graph!  Each line is a thread, with the Y-axis
 
 [![threads and waits][7]][7]
 
-This demonstrates pretty clearly that threads that are attached to the consumer side of the Repartition Streams operator are registering CXCONSUMER waits while waiting on packets of rows accumulating on the right side of node 3 to be pushed across to the left side.  The producer threads are sending rows as quickly as they can from scan of the 3.7 million rows in the Posts table, but only a few rows qualify for the join condition.  Thus it takes a long time for full "packets" of rows to build up on the right side of the exchange, and the threads on the left side are left waiting for work to do.
+This demonstrates pretty clearly that threads that are attached to the consumer side of the Repartition Streams operator are registering CXCONSUMER waits while waiting on rows to be pushed across the exchange (node 3).  The waiting issue is aggravated by the fact that rows aren't pushed through the exchange one-at-a-time - a whole, page-sized packet of rows has to accumulate on the right side before it can begin to be consumed by the thread on the right side.
 
-In this case, CXCONSUMER is not benign at all - but a sign that we have a query in need of tuning.  There are several ways to "fix" this weird query.  One option would be to create a unique constraint on the `Type` column of the `dbo.PostTypes` table.
+ The producer threads are sending rows as quickly as they can from scan of the 3.7 million rows in the Posts table, but only a few rows qualify for the join condition.  Thus it takes a long time for full "packets" of rows to build up on the right side of the exchange, and the threads on the left side are left waiting for work to do.
+
+In this case, CXCONSUMER is not benign at all - but a sign that we have a query in need of tuning.  There are several ways to "fix" this weird query with indexes and such, which are left as an exercise for the reader.
 
 ## Aside: About the Coordinator Thread
 
-There is a very long CXPACKET wait that accumulates on the coordinator thread from 49.7460533 until 51.9700543 (2,224 ms) with a waiterType of "waitForAllOwnersToOpen."  This is accumulating up until all parallel branches in the plan have "started up."  It feels like this should logically be CXCONSUMER.  Additionally, this specific CXPACKET wait seems harmless (which is funny, since CXPACKER is supposed to be the actionable wait now).
+There is a very long CXPACKET wait that accumulates on the coordinator thread from 49.7460533 until 51.9700543 (2,224 ms) with a waiterType of "waitForAllOwnersToOpen."  This accumulates until all parallel branches in the plan have "started up."  It feels like this should logically be CXCONSUMER.  Additionally, this specific CXPACKET wait seems harmless and unavoidable (which is funny, since CXPACKET is supposed to be the actionable wait now).
 
-There is a CXCONSUMER wait that accumulates on the coordinator thread from 51.9740573 to 52.0460541 (71 ms).  This is the same time period where CXCONSUMER threads are being registered at node 10.  This shows that, once all the parallel branches have started up, thread zero acts like any other consumer when waiting on packets of rows at the right side of its Gather Streams operator.
+There is a CXCONSUMER wait that accumulates on the coordinator thread from 51.9740573 to 52.0460541 (71 ms).  This shows that, once all the parallel branches have started up, thread zero acts like any other consumer when waiting on packets of rows at the left side of its Gather Streams operator.
 
 ## Look Out for CXCONSUMER
 
@@ -196,3 +201,5 @@ This wait type can definitely be a sign that something strange is going on in yo
 [6]: {{ site.url }}/assets/2019-04-11-thread-distribution.PNG
 [7]: {{ site.url }}/assets/2019-04-11-node-3-consumer-waits-by-thread.PNG
 [8]: https://docs.microsoft.com/en-us/sql/t-sql/data-types/datetime-transact-sql?view=sql-server-2017#rounding-of-datetime-fractional-second-precision
+[9]: {{ site.url }}/assets/2019-04-11-execution-plan-branches.png
+[10]: https://sqlperformance.com/2013/10/sql-plan/parallel-plans-branches-threads
