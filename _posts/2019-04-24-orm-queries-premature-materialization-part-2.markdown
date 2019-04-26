@@ -99,7 +99,7 @@ In episode three of this series, we're going to talk about the pitfalls of pagin
 
 Oh, and happy ORMing!
 
-[1]: {{ site.url }}/assets/2019-04-22-memory-used.PNG
-[2]: {{ site.url }}/assets/2019-04-22-disk-used.PNG
+[1]: {{ site.url }}/assets/2019-04-24-memory-used.PNG
+[2]: {{ site.url }}/assets/2019-04-24-disk-used.PNG
 [3]: https://docs.microsoft.com/en-us/ef/core/querying/raw-sql
 [4]: https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ef/language-reference/clr-method-to-canonical-function-mapping
