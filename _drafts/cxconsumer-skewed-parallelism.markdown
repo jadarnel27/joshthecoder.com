@@ -14,7 +14,7 @@ tags:
 
 ## What does CXCONSUMER really mean?
 
-For reference, here's the description from the Microsoft Docs:
+For reference, here's the description [from the Microsoft Docs][11]:
 
 > Occurs with parallel query plans when a consumer thread waits for a producer thread to send rows. This is a normal part of parallel query execution.
 
@@ -26,7 +26,7 @@ The common theme was skewed parallelism, so I decided to try and learn a little 
 
 ## A Bad Query™
 
-I'm working with the 10GB, 2010 version of the Stack Overflow database.  Some might describe this query as not very realistic:
+I'm working with [the 10GB, 2010 version of the Stack Overflow database][12].  Some might describe this query as not very realistic:
 
     SELECT * 
     FROM dbo.PostTypes pt
@@ -57,7 +57,7 @@ With a warm cache, this takes about 2 seconds on my laptop, and 0 rows are retur
 
 What makes this query so bad?
 
-I'm forcing the join type, and implicitly forcing the join order, resulting in only one row coming into the outer input of the initial nested loops join.  Even though the query is parallel, this causes all the matching rows to land one one thread - the thread with the single "TagWiki" row in PostTypes.
+I'm forcing the join type, and implicitly forcing the join order, resulting in only one row coming into the outer input of the initial nested loops join.  Even though the query is parallel, this causes all the matching rows to land on one thread - the thread with the single "TagWiki" row in PostTypes.
 
 Tag Wikis are one of the least common types of posts, totaling 507 rows.  But there are no indexes to support this query, so all 3.7 million rows in the Posts table are scanned.  Fortunately, the table is only scanned once, because only one of the four threads gets a row that causes the inner side of the nested loops join to run.  
 
@@ -177,7 +177,7 @@ For the visual learners, here's a graph!  Each line is a thread, with the Y-axis
 
 [![threads and waits][7]][7]
 
-This demonstrates pretty clearly that threads that are attached to the consumer side of the Repartition Streams operator are registering CXCONSUMER waits while waiting on rows to be pushed across the exchange (node 3).  The waiting issue is aggravated by the fact that rows aren't pushed through the exchange one-at-a-time - a whole, page-sized packet of rows has to accumulate on the right side before it can begin to be consumed by the thread on the right side.
+This demonstrates pretty clearly that threads that are attached to the consumer side of the Repartition Streams operator are registering CXCONSUMER waits while waiting on rows to be pushed across the exchange (node 3).  The waiting issue is aggravated by the fact that rows aren't pushed through the exchange one-at-a-time - a whole, page-sized packet of rows has to accumulate on the right side before it can begin to be consumed by the thread on the left side.
 
  The producer threads are sending rows as quickly as they can from scan of the 3.7 million rows in the Posts table, but only a few rows qualify for the join condition.  Thus it takes a long time for full "packets" of rows to build up on the right side of the exchange, and the threads on the left side are left waiting for work to do.
 
@@ -203,3 +203,5 @@ This wait type can definitely be a sign that something strange is going on in yo
 [8]: https://docs.microsoft.com/en-us/sql/t-sql/data-types/datetime-transact-sql?view=sql-server-2017#rounding-of-datetime-fractional-second-precision
 [9]: {{ site.url }}/assets/2019-04-11-execution-plan-branches.png
 [10]: https://sqlperformance.com/2013/10/sql-plan/parallel-plans-branches-threads
+[11]: https://docs.microsoft.com/en-us/sql/relational-databases/system-dynamic-management-views/sys-dm-os-wait-stats-transact-sql?view=sql-server-2017
+[12]: http://downloads.brentozar.com.s3.amazonaws.com/StackOverflow2010.7z
