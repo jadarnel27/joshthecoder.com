@@ -183,7 +183,7 @@ This demonstrates pretty clearly that threads that are attached to the consumer 
 
 The producer threads are sending rows as quickly as they can from scan of the 3.7 million rows in the Posts table, but only a few rows qualify for the join condition, and only one thread is doing all the scanning.  Thus it takes a long time for full "packets" of rows to build up on the right side of the exchange, and the threads on the left side are left waiting for work to do.
 
-In this case, CXCONSUMER is not benign at all - but a sign that we have a query in need of tuning.  There are several ways to "fix" this weird query with indexes and such, which are left as an exercise for the reader.
+In this case, CXCONSUMER is not benign at all - but a sign that we have a query in need of tuning.  There are several ways to "fix" this weird query with indexes and such, which are left as an exercise for the reader.  It turns out that the "skewed parallelism" was less of a factor than the bad join condition, although the single-threaded "parallel" scan of Posts certainly contributed to the slowness of results arriving at the exchange.
 
 ## Aside: About the Coordinator Thread
 
