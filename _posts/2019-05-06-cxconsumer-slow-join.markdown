@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "CXCONSUMER Can Be a Sign of Skewed Parallelism"
+title:  "CXCONSUMER As a Sign of Slow Parallel Joins"
 categories: 
 tags: 
 ---
@@ -18,11 +18,11 @@ For reference, here's the description [from the Microsoft Docs][11]:
 
 > Occurs with parallel query plans when a consumer thread waits for a producer thread to send rows. This is a normal part of parallel query execution.
 
-This wait was added (SQL Server 2016 SP2, SQL Server 2017 CU3) in order to try and make CXPACKET waits more actionable - these should be "benign" parallelism waits.
+This wait was added (SQL Server 2016 SP2, SQL Server 2017 CU3) in order to try and [make CXPACKET waits more actionable][13] - these should be "benign" parallelism waits.
 
 I've been curious about the CXCONSUMER wait type since I read [Erik's blog post about it][1], as well as a [couple][2] of [questions][3] on Database Administrators Stack Exchange that touched on it.  
 
-The common theme was skewed parallelism, so I decided to try and learn a little about when and where these waits are posted in queries that suffer from this particular malady.
+The common theme was skewed parallelism, so I decided to try and learn a little about when and where these waits are posted in queries that suffer from that particular malady.
 
 ## A Bad Query™
 
@@ -153,7 +153,7 @@ I may be stating the obvious, but this is a consumer thread, and it needs more d
 
 ## Waiting for Rows to Repartition
 
-Node ID 3 in the execution plan is the Repartition Streams operator to the left of the parallel nested loops join.  Since this is consumer wait, this task represents one of the 4 threads running the branch labeled "Branch 1" - which is running on the left side of node 3.
+Node ID 3 in the execution plan is the Repartition Streams operator to the left of the parallel nested loops join.  Since this is consumer wait, this task represents one of the 4 threads running the branch labeled "Branch 1" - which is running on the left side of node 3 (the red branch).
 
 [![zoomed in portion of execution plan][5]][5]
 
@@ -177,9 +177,11 @@ For the visual learners, here's a graph!  Each line is a thread, with the Y-axis
 
 [![threads and waits][7]][7]
 
+## What Does It All Mean?
+
 This demonstrates pretty clearly that threads that are attached to the consumer side of the Repartition Streams operator are registering CXCONSUMER waits while waiting on rows to be pushed across the exchange (node 3).  The waiting issue is aggravated by the fact that rows aren't pushed through the exchange one-at-a-time - a whole, page-sized packet of rows has to accumulate on the right side before it can begin to be consumed by the thread on the left side.
 
- The producer threads are sending rows as quickly as they can from scan of the 3.7 million rows in the Posts table, but only a few rows qualify for the join condition.  Thus it takes a long time for full "packets" of rows to build up on the right side of the exchange, and the threads on the left side are left waiting for work to do.
+The producer threads are sending rows as quickly as they can from scan of the 3.7 million rows in the Posts table, but only a few rows qualify for the join condition, and only one thread is doing all the scanning.  Thus it takes a long time for full "packets" of rows to build up on the right side of the exchange, and the threads on the left side are left waiting for work to do.
 
 In this case, CXCONSUMER is not benign at all - but a sign that we have a query in need of tuning.  There are several ways to "fix" this weird query with indexes and such, which are left as an exercise for the reader.
 
@@ -191,17 +193,24 @@ There is a CXCONSUMER wait that accumulates on the coordinator thread from 51.97
 
 ## Look Out for CXCONSUMER
 
-This wait type can definitely be a sign that something strange is going on in your queries.  Look out for skewed parallelism - particularly in cases like this, where a parallel exchange operator is active for a long time waiting on a long-running operator to send it data.
+This wait type can definitely be a sign that something strange is going on in your queries.  Look out for poorly performing joins - particularly in cases like this, where a parallel exchange operator is active for a long time waiting on a long-running operator to send it data.
+
+---
+
+*Note: I'd like to give a huge "thank you!" to Paul White ([b][14]\|[t][15]) for reviewing the drafts of this post for technical accuracy related to parallelism in SQL Server, and for taking the time to help me gain an understanding of the details along the way - you're awesome, Paul.*
 
 [1]: https://www.brentozar.com/archive/2018/07/cxconsumer-is-harmless-not-so-fast-tiger/
 [2]: https://dba.stackexchange.com/q/226366/6141
 [3]: https://dba.stackexchange.com/q/233536/6141
-[4]: {{ site.url }}/assets/2019-04-11-execution-plan.PNG
-[5]: {{ site.url }}/assets/2019-04-11-parallel-branch.PNG
-[6]: {{ site.url }}/assets/2019-04-11-thread-distribution.PNG
-[7]: {{ site.url }}/assets/2019-04-11-node-3-consumer-waits-by-thread.PNG
+[4]: {{ site.url }}/assets/2019-05-06-execution-plan.PNG
+[5]: {{ site.url }}/assets/2019-05-06-parallel-branch.PNG
+[6]: {{ site.url }}/assets/2019-05-06-thread-distribution.PNG
+[7]: {{ site.url }}/assets/2019-05-06-node-3-consumer-waits-by-thread.PNG
 [8]: https://docs.microsoft.com/en-us/sql/t-sql/data-types/datetime-transact-sql?view=sql-server-2017#rounding-of-datetime-fractional-second-precision
-[9]: {{ site.url }}/assets/2019-04-11-execution-plan-branches.png
+[9]: {{ site.url }}/assets/2019-05-06-execution-plan-branches.png
 [10]: https://sqlperformance.com/2013/10/sql-plan/parallel-plans-branches-threads
 [11]: https://docs.microsoft.com/en-us/sql/relational-databases/system-dynamic-management-views/sys-dm-os-wait-stats-transact-sql?view=sql-server-2017
 [12]: http://downloads.brentozar.com.s3.amazonaws.com/StackOverflow2010.7z
+[13]: https://blogs.msdn.microsoft.com/sql_server_team/making-parallelism-waits-actionable/
+[14]: https://www.sql.kiwi/
+[15]: https://twitter.com/@SQL_KIwi
