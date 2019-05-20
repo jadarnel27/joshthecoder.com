@@ -7,7 +7,7 @@ tags:
 
 ## How a Parallel Loop Join Usually Works
 
-This query uses the 2010 version of the Stack Overflow database running on SQL Server 2017 :
+This query uses the 2010 version of the Stack Overflow database running on SQL Server 2017:
 
     SELECT * 
     FROM dbo.PostTypes pt
@@ -65,7 +65,7 @@ Paul's footnote says:
 
 We know, from trying it, that there is only one row in `dbo.PostTypes` that has `[Type] = 'TagWiki'` - but how can we guarantee that (as far as the optimizer is concerned)?
 
-One way would be a unique constraint to that column:
+One way would be to add a unique constraint to that column:
 
     ALTER TABLE dbo.PostTypes ADD CONSTRAINT UQ_Type UNIQUE (Type);
 
