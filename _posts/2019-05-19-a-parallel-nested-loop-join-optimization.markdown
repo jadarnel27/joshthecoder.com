@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "A Parallel Nested Loop Join Optimization"
+title:  "A Parallel Nested Loops Join Optimization"
 categories: 
 tags: 
 ---
