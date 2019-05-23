@@ -8,6 +8,12 @@ tags:
 <style type="text/css">
     img {
         width: 48%;
+        margin: 0 auto;
+        display: block;
+    }
+
+    p.inline img {
+        display: inline;
     }
 </style>
 
@@ -15,7 +21,7 @@ I attended my first SQL Saturday over the weekend: [SQL Saturday #845 - Atlanta 
 
 [![Photo of attendee badge and lanyard][28]][28]
 
-There were *so many* great sessions on the schedule, I hated to have to narrow my choices to just session per time slot.  Unfortunately, I'm not familiar enough with *replication* to attend multiple sessions at once (feel free to groan audibly).
+There were *so many* great sessions on the schedule, I hated to have to narrow my choices to just one per time slot.  Unfortunately, I'm not familiar enough with *replication* to attend multiple sessions at once (feel free to groan audibly).
 
 I wanted to take a minute and say a little bit about each of the sessions I *did* attend, and some of the people I met while I was there.  I'm going to go through the sessions in the order I attended them.
 
@@ -31,6 +37,7 @@ Next up was [this session][5] from Patrick LeBlanc ([b][6]\|[t][7]) and Adam Sax
 
 These guys are incredibly entertaining, but even more than that, the talk really got me interested in trying out the product.  They are obviously passionate about the technology they work with, and telling stories about how they've helped businesses solve problems.  I have clients that have recently implemented BI solutions, and it would be cool to be able to leverage this tool to help them take even better advantage of the data now at their fingertips.
 
+{:.inline}
 [![Photo of Patrick and Adam presenting][10]][10]
 [![Another photo of Patrick and Adam presenting][11]][11]
 
@@ -126,4 +133,4 @@ PS: sorry for the bad pictures, I'm no photographer 😶
 [26]: https://twitter.com/angelatidwell
 [27]: {{ site.url }}/assets/2019-05-22-tidwells-tidbits.jpg
 
-[28]: {{ site.url }}/assets/2019-05-22-lanyard.jpg
+[28]: {{ site.url }}/assets/2019-05-22-badge.jpg
