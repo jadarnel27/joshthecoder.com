@@ -31,7 +31,7 @@ I'm on a machine with 4 logical processors with the default parallelism settings
 
 If I leave off the `BEGIN TRANSACTION`, the query executes successfully and has [this query plan][1]:
 
-![works on my machine][3]
+[![works on my machine][3]][3]
 
 Here's [the deadlock graph][4] as well.
 
@@ -137,8 +137,8 @@ As this appears to be a bug, I have filed an issue on the feedback site about it
 
 [1]: https://www.brentozar.com/pastetheplan/?id=rkRJMNQzm
 [2]: https://dba.stackexchange.com/a/72170/6141
-[3]: {{ site.url }}/assets/draft-parallel-query-plan.png
-[4]: {{ site.url }}/assets/draft-parallel-deadlock-graph.xml
+[3]: {{ site.url }}/assets/2018-07-05-parallel-query-plan.PNG
+[4]: {{ site.url }}/assets/2018-07-05-parallel-deadlock-graph.xml
 [5]: https://orderbyselectnull.com/
 [6]: {{ site.baseurl }}{% post_url 2018-06-29-locks-on-system-tables %}
 [7]: https://sqlperformance.com/author/paulwhitenzgmail-com
