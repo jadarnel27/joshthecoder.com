@@ -139,7 +139,7 @@ This example is rather trivial, but imagine debugging a complex procedure, with 
 
 ## Summary
 
-It makes total sense that the `BEGIN TRAN` won't be written to the log until it's actually necessary.  Writing to disk is *expensive*, so SQL Server will avoid it when possible.  They are all kinds of nifty little things SQL Server does behind the scenes to avoid writes (see Paul White's [The Impact of Non-Updating Updates][5] for another example), and I thought it was cool to learn that transactions are on that list.
+It makes total sense that the `BEGIN TRAN` won't be written to the log until it's actually necessary.  Writing to disk is *expensive*, so SQL Server will avoid it when possible.  There are all kinds of nifty little things SQL Server does behind the scenes to avoid writes (see Paul White's [The Impact of Non-Updating Updates][5] for another example), and I thought it was cool to learn that transactions are on that list.
 
 It can be helpful to keep this in mind when troubleshooting procedures that use explicit transactions, as errors might be reported in surprising places depending on where the transaction actually "begins" (according to the transaction log).
 
