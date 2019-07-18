@@ -42,3 +42,10 @@ disqus:
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+exclude: [
+    Gemfile, Gemfile.lock, node_modules, vendor/bundle/, # Defaults
+    vendor/cache/, vendor/gems/, vendor/ruby/, # Defaults
+    build-prod.sh, 
+    README.md, 
+    serve.sh
+  ]
