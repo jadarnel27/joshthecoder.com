@@ -155,7 +155,7 @@ I use the phrase "happy path" because there are some guard clauses and other bra
 
 ## Exponential Conclusion
 
-Under the 2012+ cardinality estimator, SQL Server uses an exponential backoff approach to deal with the ascending key problem.  Depending on various factors (table size, modification count, and distinct values), queries above existing histogram ranges will result in an estimate of 
+Under the 2014+ cardinality estimator, SQL Server uses an exponential backoff approach to deal with the ascending key problem.  Depending on various factors (table size, modification count, and distinct values), queries above existing histogram ranges will result in an estimate of 
 
 - the square root of the table cardinality, 
 - the number of modifications to the table since stats were updated, or
