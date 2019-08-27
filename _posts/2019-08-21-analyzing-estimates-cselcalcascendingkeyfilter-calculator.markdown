@@ -143,19 +143,25 @@ After the square root has been calculated, it is compared to the AR.  21.2132034
 
 ## Other Cases
 
-There are a lot of branches in this calculator.  As far as I can tell, in the "happy path" for this calculator, there are three possible estimate formulas:
+There are a lot of branches in this calculator.  As far as I can tell, in the "happy path" for this calculator, there are three possible estimate results:
 
-- `SQRT(AC)` - This formula is used in two cases:
-  - When `MC > AR` *and* `SQRT(AC) <= AR`
-  - When `MC <= AR` *and* `SQRT(AC) <= MC`
-- `AR` - If `MC > AR`, and `SQRT(AC) > AR`, then `AR` is used as the estimate
-- `MC` - If `MC <= AR`, and `SQRT(AC) > MC`, then `MC` is used as the estimate
+- `SQRT(AC)`
+- `AR`
+- `MC`
 
-I use the phrase "happy path" because there are some guard clauses and other branches in this code I never managed to hit.  Presumably these would either cause an error, or result in the calculator "failing" as the `CSelCalcColumnInInterval` does in this example.
+Which one is chosen is based on the following logic:
+
+    Estimate = MIN(SQRT(AC), MIN(AR, MC))
+
+Note that if statistics are *sampled*, then MC is not considered.  So the formula becomes:
+
+    Estimate = MIN(SQRT(AC), AR))
+
+I use the phrase "happy path" above because there are some guard clauses and other branches in this code I never managed to hit.  Presumably these would either cause an error, or result in the calculator "failing" as the `CSelCalcColumnInInterval` does in this example.
 
 ## Exponential Conclusion
 
-Under the 2014+ cardinality estimator, SQL Server uses an exponential backoff approach to deal with the ascending key problem.  Depending on various factors (table size, modification count, and distinct values), queries above existing histogram ranges will result in an estimate of 
+Under the 2014+ cardinality estimator, SQL Server uses an exponential backoff approach to deal with the ascending key problem.  Depending on various factors (table size, modification count, distinct values, and sampled vs fullscan stats), queries above existing histogram ranges will result in an estimate of 
 
 - the square root of the table cardinality, 
 - the number of modifications to the table since stats were updated, or
