@@ -155,7 +155,7 @@ Which one is chosen is based on the following logic:
 
 Note that if statistics are *sampled*, then MC is not considered.  So the formula becomes:
 
-    Estimate = MIN(SQRT(AC), AR))
+    Estimate = MIN(SQRT(AC), AR)
 
 I use the phrase "happy path" above because there are some guard clauses and other branches in this code I never managed to hit.  Presumably these would either cause an error, or result in the calculator "failing" as the `CSelCalcColumnInInterval` does in this example.
 
