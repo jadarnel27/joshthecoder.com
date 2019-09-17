@@ -88,6 +88,6 @@ And if you have any ideas on what might be going on with Tony's server, feel fre
 [2]: https://dba.stackexchange.com/q/248888/6141
 [3]: https://dba.stackexchange.com/a/248901/6141
 [4]: https://erikdarlingdata.com/author/joe-obbish/
-[5]: {{ site.url }}/assets/2019-09-17-snapshot-settings.PNG
-[6]: {{ site.url }}/assets/2019-09-17-alter-progress.PNG
-[7]: {{ site.url }}/assets/2019-09-17-version-store-usage.PNG
+[5]: {{ site.url }}/assets/2019-09-17-snapshot-settings.png
+[6]: {{ site.url }}/assets/2019-09-17-alter-progress.png
+[7]: {{ site.url }}/assets/2019-09-17-version-store-usage.png
