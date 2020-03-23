@@ -116,13 +116,13 @@ Thanks for reading, and happy Azure-ing 😀
 
 [1]: https://twitter.com/bobwardms
 [2]: https://aka.ms/bobwardms
-[3]: {{ site.url }}/assets/2020-03-20-azure-sql-options-vm.png
+[3]: {{ site.url }}/assets/2020-03-23-azure-sql-options-vm.png
 [4]: https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sql/virtual-machines-windows-sql-server-iaas-faq
 [5]: https://docs.microsoft.com/en-us/azure/sql-database/sql-database-managed-instance-transact-sql-information
 [6]: https://docs.microsoft.com/en-us/azure/sql-database/sql-database-features#sql-features
 [7]: https://www.joshthecoder.com/2018/12/03/always-run-rhs-in-separate-process.html
-[8]: {{ site.url }}/assets/2020-03-20-azure-sql-options-mi.png
-[9]: {{ site.url }}/assets/2020-03-20-azure-sql-options-db.png
+[8]: {{ site.url }}/assets/2020-03-23-azure-sql-options-mi.png
+[9]: {{ site.url }}/assets/2020-03-23-azure-sql-options-db.png
 [10]: https://azure.microsoft.com/en-us/services/sql-database-edge/
 [11]: https://azure.microsoft.com/en-us/services/azure-arc/
 [12]: https://cloudblogs.microsoft.com/sqlserver/
