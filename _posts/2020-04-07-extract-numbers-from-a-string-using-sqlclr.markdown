@@ -201,4 +201,4 @@ By the way, if you're not confident you can write a reasonable CLR-based solutio
 [10]: https://www.writinghighperf.net/
 [11]: https://sqlsharp.com/
 [12]: https://sqlquantumleap.com/
-[13]: https://twitter.com/srutzky
+[13]: https://twitter.com/SqlQuantumLeap
