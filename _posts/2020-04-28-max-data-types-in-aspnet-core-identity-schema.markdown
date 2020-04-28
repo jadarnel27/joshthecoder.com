@@ -5,11 +5,11 @@ categories:
 tags: 
 ---
 
-I have been working on some ASP.NET Core web applications recently that use [the Identity APIs](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity) for user management, email confirmation, etc.  I noticed that the default "Users" table, which is produced by Entity Framework migrations, has some odd choices for column sizes.  Since it kind of stinks to be stuck with bad defaults from the framework, I thought I'd write up how to improve this in your new projects that use Identity.
+I have been working on some ASP.NET Core web applications recently that use [the Identity APIs][1] for user management, email confirmation, etc.  I noticed that the default "Users" table, which is produced by Entity Framework migrations, has some odd choices for column sizes.  Since it kind of stinks to be stuck with bad defaults from the framework, I thought I'd write up how to improve this in your new projects that use Identity.
 
 ## Getting a Basic .NET Core App
 
-Once you have installed .NET Core, you can generate a new app with Identity-based user management from the command line like this (copied straight from the docs page linked above):
+As long as you already have .NET Core installed, you can generate a new app with Identity-based user management from the command line like this (copied straight from the docs page linked above):
 
     dotnet new webapp --auth Individual -uld -o WebApp1
 
@@ -59,7 +59,7 @@ What are better choices for each of these columns?
 
 ### Phone Number
 
-This might be application specific, but it's generally accepted that fifteen digits is [the most you need for a phone number](https://en.wikipedia.org/wiki/E.164).  Strip out special characters before storing.  If you need dial strings, extensions, etc - consider putting those in another column.
+This might be application specific, but it's generally accepted that fifteen digits is [the most you need for a phone number][2].  Strip out special characters before storing.  If you need dial strings, extensions, etc - consider putting those in another column.
 
 I get that Identity is part of a general purpose framework, but maybe it could stand to be a little more opinionated in this area.  To that end, I think `varchar` would suffice, as all that will be stored here is digits.
 
@@ -67,7 +67,7 @@ Suggestion: `[PhoneNumber] [varchar](15) NULL`
 
 ### Security Stamp
 
-Glancing through the built-in implementation of [the `IdentityUser` object](https://github.com/dotnet/aspnetcore/blob/e7df020906731156268adffa9c7c19fd8ba25747/src/Identity/Extensions.Stores/src/IdentityUser.cs#L19-L23) (which is what gets mapped to this table), `SecurityStamp` is set to a `Guid` by default:
+Glancing through the built-in implementation of [the `IdentityUser` object][3] (which is what gets mapped to this table), `SecurityStamp` is set to a `Guid` by default:
 
     public IdentityUser()
     {
@@ -75,7 +75,7 @@ Glancing through the built-in implementation of [the `IdentityUser` object](http
         SecurityStamp = Guid.NewGuid().ToString();
     }
 
-Based on that alone, it seems that `uniqueidentifier` would be good.  However, anytime that stamp gets updated, it's set using [this method](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Core/src/UserManager.cs#L2430-L2439):
+Based on that alone, it seems that `uniqueidentifier` would be good.  However, anytime that stamp gets updated, it's set using [this method][4]:
 
     private static string NewSecurityStamp()
     {
@@ -94,11 +94,11 @@ Suggestion: `[SecurityStamp] [varchar](36) NOT NULL`
 
 ### Concurrency Stamp
 
-The concurrency stamp is *also* initialized to a `Guid` [here](https://github.com/dotnet/aspnetcore/blob/e7df020906731156268adffa9c7c19fd8ba25747/src/Identity/Extensions.Stores/src/IdentityUser.cs#L106):
+The concurrency stamp is *also* initialized to a `Guid` [here][5]:
 
     public virtual string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
 
-It remains a `Guid` [across updates as well](https://github.com/dotnet/aspnetcore/blob/e7df020906731156268adffa9c7c19fd8ba25747/src/Identity/Extensions.Core/src/UserManager.cs#L454-L457), so this one is a little less complex.
+It remains a `Guid` [across updates as well][6], so this one is a little less complex.
 
 Ideally we could use `uniqueidentifier`, but that requires overriding the `IdentityUser` class and hiding the existing `ConcurrencyStamp` property.  To make this more easily applicable while still improving on `nvarchar(max)`, I'll go with `char(36)` in this case due to the C# type being a string.
 
@@ -108,7 +108,7 @@ Suggestion: `[ConcurrencyStamp] char(36) NOT NULL`
 
 The PasswordHash length is a little trickier to sort out.  I took a look at some test data from apps I've worked on, and the PasswordHash is always 84 characters.
 
-Looking at [the "V3" version of the password hashing code](https://github.com/dotnet/aspnetcore/blob/9a1810c1dbe432fc7bc7e8bc68fa22ab787c0452/src/Identity/Extensions.Core/src/PasswordHasher.cs#L132-L156):
+Looking at [the "V3" version of the password hashing code][7]:
 
     private byte[] HashPasswordV3(string password, RandomNumberGenerator rng)
     {
@@ -138,7 +138,7 @@ Looking at [the "V3" version of the password hashing code](https://github.com/do
 
 The size of the resulting hash is 13 + 16 (salt size) + 32 (hash function result) = 61 bytes.  These bytes are then Base-64 encoded as a string.
 
-According to [information on The Internet](https://stackoverflow.com/a/855331/861565), the number of characters output by `Convert.ToBase64String` can be calculated as 61 (inputs bytes) + 2 * (4/3) = 84 bytes (at one byte per character).
+According to [information on The Internet][8], the number of characters output by `Convert.ToBase64String` can be calculated as 61 (inputs bytes) + 2 * (4/3) = 84 bytes (at one byte per character).
 
 In the same file there is a "V2" hash with a lower output size (68 characters).
 
@@ -196,8 +196,18 @@ Finally, run the DB migrations to get the new table.
 
 It would be nice if this were fixed in the framework / template itself.  I was planning to submit an issue, but found that one exists already:
 
-[Default Values for IdentityUser](https://github.com/dotnet/aspnetcore/issues/5823)
+[Default Values for IdentityUser][9]
 
 However, it hasn't gotten a lot of attention.  Please go add some 👍 reactions, or comment on the issue, and maybe it will get added to the roadmap!
 
 In the meantime, hopefully the instructions above will be helpful in setting up your new Identity projects for success.
+
+[1]: https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity
+[2]: https://en.wikipedia.org/wiki/E.164
+[3]: https://github.com/dotnet/aspnetcore/blob/e7df020906731156268adffa9c7c19fd8ba25747/src/Identity/Extensions.Stores/src/IdentityUser.cs#L19-L23
+[4]: https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Core/src/UserManager.cs#L2430-L2439
+[5]: https://github.com/dotnet/aspnetcore/blob/e7df020906731156268adffa9c7c19fd8ba25747/src/Identity/Extensions.Stores/src/IdentityUser.cs#L106
+[6]: https://github.com/dotnet/aspnetcore/blob/e7df020906731156268adffa9c7c19fd8ba25747/src/Identity/Extensions.Core/src/UserManager.cs#L454-L457
+[7]: https://github.com/dotnet/aspnetcore/blob/9a1810c1dbe432fc7bc7e8bc68fa22ab787c0452/src/Identity/Extensions.Core/src/PasswordHasher.cs#L132-L156
+[8]: https://stackoverflow.com/a/855331/861565
+[9]: https://github.com/dotnet/aspnetcore/issues/5823
