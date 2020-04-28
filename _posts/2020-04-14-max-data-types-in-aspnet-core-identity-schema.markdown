@@ -75,7 +75,7 @@ Glancing through the built-in implementation of [the `IdentityUser` object](http
         SecurityStamp = Guid.NewGuid().ToString();
     }
 
-Based on that along, it seems that `char(36)` would be good.  However, anytime that stamp gets updated, it's set using [this method](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Core/src/UserManager.cs#L2430-L2439):
+Based on that alone, it seems that `uniqueidentifier` would be good.  However, anytime that stamp gets updated, it's set using [this method](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Core/src/UserManager.cs#L2430-L2439):
 
     private static string NewSecurityStamp()
     {
@@ -88,9 +88,9 @@ Based on that along, it seems that `char(36)` would be good.  However, anytime t
         return Base32.ToBase32(bytes);
     }
 
-This results in a 32 character "hash" of random bytes.  This is sort of unfortunate.  Because of the minor variablity, it might be wasteful to use `char(36)`, since the majority of rows will only have 32 characters.
+This results in a 32 character *string*, which is a hash of random bytes.  Because of the minor variability, it might be wasteful to use `char(36)`, since the majority of rows over time will only have 32 characters (the stamp gets updated when users change their passwords).
 
-Suggestion: `[SecurityStamp] [varchar](36) NULL`
+Suggestion: `[SecurityStamp] [varchar](36) NOT NULL`
 
 ### Concurrency Stamp
 
@@ -100,9 +100,9 @@ The concurrency stamp is *also* initialized to a `Guid` [here](https://github.co
 
 It remains a `Guid` [across updates as well](https://github.com/dotnet/aspnetcore/blob/e7df020906731156268adffa9c7c19fd8ba25747/src/Identity/Extensions.Core/src/UserManager.cs#L454-L457), so this one is a little less complex.
 
-Ideally we could use `uniqueidentifier`, but it's a bit simpler to just use `char(36)` in this case due to the C# type being a string.
+Ideally we could use `uniqueidentifier`, but that requires overriding the `IdentityUser` class and hiding the existing `ConcurrencyStamp` property.  To make this more easily applicable while still improving on `nvarchar(max)`, I'll go with `char(36)` in this case due to the C# type being a string.
 
-Suggestion: `[ConcurrencyStamp] char(36) NULL`
+Suggestion: `[ConcurrencyStamp] char(36) NOT NULL`
 
 ### Password Hash
 
@@ -136,9 +136,9 @@ Looking at [the "V3" version of the password hashing code](https://github.com/do
         return outputBytes;
     }
 
-The size of the resulting hash is 13 + 16 (salt size) + 32 (hash function result) = 61 bytes.  These bytes are then Base-64 encoded.
+The size of the resulting hash is 13 + 16 (salt size) + 32 (hash function result) = 61 bytes.  These bytes are then Base-64 encoded as a string.
 
-According to [information on The Internet](https://stackoverflow.com/a/855331/861565), the number of bytes output by `Convert.ToBase64String` can be calculated as 61 (inputs bytes) + 2 * (4/3) = 84 bytes (at one byte per character).
+According to [information on The Internet](https://stackoverflow.com/a/855331/861565), the number of characters output by `Convert.ToBase64String` can be calculated as 61 (inputs bytes) + 2 * (4/3) = 84 bytes (at one byte per character).
 
 In the same file there is a "V2" hash with a lower output size (68 characters).
 
@@ -148,25 +148,42 @@ Suggestion: `[PasswordHash] [char](84) NULL`
 
 ## How to Fix It
 
-For a new project, before running the initial migration, delete the included migration files:
+For a *new* project, before running the initial migration, delete the included migration files:
 
 - 00000000000000_CreateIdentitySchema.cs
 - 00000000000000_CreateIdentitySchema.Designer.cs
 - ApplicationDbContextModelSnapshot.cs).
 
-For any project, update the ApplicationDbContext to include this method:
+Then, for *any* project, update the ApplicationDbContext to include this method:
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
         builder.Entity<IdentityUser>(u =>
-        {
-            u.Property(user => user.PhoneNumber).HasColumnType("varchar(15)");
-            u.Property(user => user.PasswordHash).HasColumnType("char(84)");
-            u.Property(user => user.ConcurrencyStamp).HasColumnType("char(36)");
-            u.Property(user => user.SecurityStamp).HasColumnType("varchar(36)");
-        });
+        {                                                                                                                            
+            u.Property(user => user.PhoneNumber)
+                .IsUnicode(false)
+                .IsFixedLength(false)
+                .HasMaxLength(15);
+
+            u.Property(user => user.PasswordHash)
+                .IsUnicode(false)
+                .IsFixedLength(true)
+                .HasMaxLength(84);
+
+            u.Property(user => user.ConcurrencyStamp)
+                .IsUnicode(false)
+                .IsFixedLength(true)
+                .HasMaxLength(36)
+                .IsRequired(true);
+
+            u.Property(user => user.SecurityStamp)
+                .IsUnicode(false)
+                .IsFixedLength(false)
+                .HasMaxLength(36)
+                .IsRequired(true);
+        }
     }
 
 Then, create a new migration using the command line:
@@ -177,7 +194,7 @@ Finally, run the DB migrations to get the new table.
 
 ## Fixing This in ASP.NET Core Identity
 
-It would be nice if this were fixed in the framework itself.  I was planning to submit an issue, but found that one exists already:
+It would be nice if this were fixed in the framework / template itself.  I was planning to submit an issue, but found that one exists already:
 
 [Default Values for IdentityUser](https://github.com/dotnet/aspnetcore/issues/5823)
 
