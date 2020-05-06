@@ -119,7 +119,9 @@ I enjoyed listening to these early episodes with short riffs on how we spend our
 
 ## Closing
 
-Hopefully you find these helpful or entertaining on your commute, at your desk, or on the run 😎
+I'd be remiss if I didn't say a huge "THANK YOU" to all the folks that create all of this content and make it available for free.  You all rock!
+
+Readers - hopefully you find these podcasts helpful or entertaining on your commute, at your desk, or on the run 😎
 
 Am I missing out on some great SQL Server or other tech-related podcasts?  Let me know in the comments, or [on Twitter][13]!
 
