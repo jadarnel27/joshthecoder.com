@@ -5,6 +5,12 @@ categories:
 tags: 
 ---
 
+<style type="text/css">
+    pre.highlight {
+        white-space: pre-wrap;
+    }
+</style>
+
 I had a 2-node availability group (AG) + fileshare witness system experience an unexpected failover recently.  
 
 The synchronous secondary was being patched, and when it came back up from a reboot, the current primary unexpectedly failed over.  We weren't done with all the patching on the secondary, so this caused a short outage, and we had to fail back to the original primary to finish the patching (which is of course another short interruption in availability).
@@ -269,6 +275,8 @@ Digging a little deeper, I discovered that the network card driver had been upda
  
 SVR13 decides to become an army of one, and proposes a new view that it only sees itself.
 
+Notice `downers=(1)` in the new view of things.  Yes, Cluster Service, this is starting to be a real downer.
+
     21:17:42.347 INFO  [RGP] node 2: GoSingleton
     21:17:42.347 INFO  [RGP] node 2: emit view 1302(2)
     21:17:42.347 INFO  [RGP] sending to 64 nodes 2: 1302(2) => 1302(2) +() -() [()]
@@ -284,7 +292,7 @@ Because this is a major change in the cluster, SVR13 is going to update the paxo
     21:17:42.347 WARN  [QUORUM] Node 2: One off quorum (2)
     21:17:42.347 INFO  [QUORUM] Node 2: death timer is started at 2020/05/12-01:17:42.347 and expires in 90 seconds
 
-This is an interesting little note that SVR13 has decided *wait* on updating its paxos tag until it can reach the witness.
+This is an interesting little note that SVR13 has decided to *wait* on updating its paxos tag until it can reach the witness.
 
     21:17:42.347 INFO  [QUORUM] Node 2: Delaying update of next and last epoch until witness is arbitrated and we have quorum. Current view: 1302:00000000000000000000000000000000000000000000000000000000000000100
 
@@ -302,7 +310,7 @@ The arbitration process has begun!
     21:17:42.347 INFO  [RES] File Share Witness <File Share Witness>: Beginning arbitration ...
     21:17:42.347 INFO  [RES] File Share Witness <File Share Witness>: Obtaining the virtual server token from the core netname resource.
 
-In a moment of terrible timing, SVR13 is able to connect to the file share witness moments after deciding that SVR14 is down.
+In an incident of terrible timing, SVR13 is able to connect to the file share witness moments after deciding that SVR14 is down.
 
 However, there is a built-in 6-second "backoff" because the core cluster resources were just acquired.  This give the *previous* owner, who might actually be up, a chance to first get the arbitration win.  This is based on the idea that maybe SVR13 itself is the problem child.
 
