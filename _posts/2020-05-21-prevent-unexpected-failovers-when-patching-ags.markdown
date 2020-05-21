@@ -156,7 +156,7 @@ It got the lock, so now it tries to update the tag:
     21:17:51.909 INFO  [QUORUM] Node 1 CompareAndSetWitnessTag: releasing witness share lock
     21:17:51.909 INFO  [RES] File Share Witness <File Share Witness>: Releasing locked witness share.
 
-***Gasp!***  Something else got their first - you can see the witness tag (`87:87:31907`) is higher than the local tag from SVR14 (`87:86:31906`).  This means that another node is up, *and* it's already updated the paxos tag on the witness, resulting in this error in the cluster log:
+***Gasp!***  Something else got there first - you can see the witness tag (`87:87:31907`) is higher than the local tag from SVR14 (`87:86:31906`).  This means that another node is up, *and* it's already updated the paxos tag on the witness, resulting in this error in the cluster log:
 
     21:17:51.909 ERR   Quorum lost because failed to update witness epoch after node failure (status = 5925)
 
