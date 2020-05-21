@@ -474,5 +474,5 @@ And again, thanks to Sean for helping out with the original problem, and reviewi
 [3]: https://www.seangallardy.com/
 [4]: https://support.microsoft.com/en-us/help/947713/the-implications-of-using-the-forcequorum-switch-to-start-the-cluster
 [5]: https://docs.microsoft.com/en-us/sql/database-engine/availability-groups/windows/upgrading-always-on-availability-group-replica-instances?view=sql-server-ver15#rolling-upgrade-process
-[6]: {{ site.url }}/assets/2020-05-19-cluster-manager-pause-node.PNG
+[6]: {{ site.url }}/assets/2020-05-21-cluster-manager-pause-node.PNG
 [7]: https://docs.microsoft.com/en-us/powershell/module/failoverclusters/suspend-clusternode?view=win10-ps
