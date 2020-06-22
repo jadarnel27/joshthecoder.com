@@ -128,6 +128,6 @@ In my case, there wasn't too much of an impact.  However, if you have high trans
 
 I think there is really a lack of information about this setting, and really the whole topic, online - so I hope this helps someone!
 
-[1]: https://blogs.msdn.microsoft.com/clustering/2013/01/24/understanding-how-failover-clustering-recovers-from-unresponsive-resources/
+[1]: https://techcommunity.microsoft.com/t5/failover-clustering/understanding-how-failover-clustering-recovers-from-unresponsive/ba-p/371847
 [2]: https://support.microsoft.com/en-us/help/914458/behavior-of-the-looksalive-and-isalive-functions-for-the-resources-tha
 [3]: {{ site.url }}/assets/2018-12-03-rhs-screenshot.PNG
