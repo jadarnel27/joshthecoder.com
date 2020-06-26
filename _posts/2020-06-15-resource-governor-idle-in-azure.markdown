@@ -56,6 +56,12 @@ My go to resources for the meaning of wait stats are:
 
 Unfortunately, there's not much in either location ("*TBD*" and "*Internal use only*", respectively).  I've emailed Paul about potentially updating the page in his wait stats library.
 
+---
+
+**UPDATE 2020-06-26:** Paul has updated that wait stats library with information from the MS blog (mentioned below) and this post - thanks, Paul!
+
+---
+
 However, some Googling brought me to this 2015 Microsoft blog post:
 
 [What is RESOURCE_GOVERNOR_IDLE and why you should not ignore it completely][5]
