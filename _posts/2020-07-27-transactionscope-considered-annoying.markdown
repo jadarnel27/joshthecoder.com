@@ -171,9 +171,9 @@ Well for one thing, I haven't seen a lot of practical *demos* about this stuff. 
 
 But mostly it's because I forget this all the time when working on new apps, and I'm hoping this will help me remember 🤣
 
-[1]: {{ site.url }}/assets/2020-07-27-deadlock-graph.PNG
+[1]: {{ site.url }}/assets/2020-07-27-deadlock-graph.png
 [2]: https://www.brentozar.com/archive/2017/12/introducing-sp_blitzlock-troubleshooting-sql-server-deadlocks/
-[3]: {{ site.url }}/assets/2020-07-27-blitzlock-results.PNG
+[3]: {{ site.url }}/assets/2020-07-27-blitzlock-results.png
 [4]: https://docs.microsoft.com/en-us/archive/blogs/dbrowne/using-new-transactionscope-considered-harmful
 [5]: https://github.com/dotnet/runtime/blob/4a683afec06f01e21651e7da1e6996277665e0ce/src/libraries/System.Transactions.Local/src/System/Transactions/TransactionManager.cs#L274-L287
 [6]: https://www.google.com/search?q=transactionscope+serializable
