@@ -51,7 +51,7 @@ This works great, ship it!
 
 ## Following the Leaders
 
-Of course, user #1358 writes some great posts themselves - so we have a page that will show a user's basic information, and a list of all their posts.
+Of course, user #1358 writes some great posts themselves - so we have a page that will show a user's basic information and a list of all their posts.
 
 When we view a user's profile, we also increment a field called "Views" that shows how many times their profile has been viewed.  We don't want to drive that number up if the same person is refreshing the profile page over and over again, so there's a "CheckForDuplicateView" method in there before we actually update the count.
 
