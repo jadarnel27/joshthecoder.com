@@ -52,7 +52,17 @@ This results in `THREADPOOL` waits for the last several queries that came in, as
 
 There are over 20 `THREADPOOL` waits in progress at this point.  These queries are getting their feelings hurt, because it feels like SQL Server is ignoring them.
 
-*Sidebar: you might be wondering why I had to use so many instances of that query - SQL Server will "reuse" threads and workers, especially when resources are constrained*
+---
+
+*Sidebar: You might be wondering why I had to use so many instances of that query.  SQL Server downgraded the degrees of parallelism for these incoming queries after the first several - everything after that dropped from DOP 12 to DOP 2 or DOP 1!  So it took a lot more queries to get to the "max worker threads" limit.*
+
+*You can see that happening in the last resultset for `sp_PressureDetector`'s cpu-related output:*
+
+[![screenshot showing DOP][12]][12]
+
+*Thanks to [@erikdarlingdata][13] for correcting me on this.*
+
+---
 
 This is representative of one typical `THREADPOOL` scenario - a blocking chain that leads to many used threads (even though they are idle, and CPU usage on the system is low).
 
@@ -139,3 +149,5 @@ I haven't see this "thread ramp up period" be the source of real problems in wor
 [9]: {{ site.url }}/assets/2020-08-27-pressure-detector-during-weird-threadpool.png
 [10]: https://docs.microsoft.com/en-us/sql/relational-databases/system-dynamic-management-views/sys-dm-os-wait-stats-transact-sql?view=sql-server-ver15
 [11]: {{ site.url }}/assets/2020-08-27-weird-threadpool.png
+[12]: {{ site.url }}/assets/2020-08-27-dop-downgrades.png
+[13]: https://twitter.com/erikdarlingdata
