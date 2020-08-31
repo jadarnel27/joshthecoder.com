@@ -80,7 +80,7 @@ I'm going to restart SQL Server, and then run this query through SQLQueryStress 
 
 This shouldn't come anywhere *near* the max worker threads limit, so no `THREADPOOL` waits are expected.  As we all know, expectations and reality have a way of getting out of sync though 😀
 
-I ran `sp_BlitzFirst` for 10 seconds during this workload, **which captured 108 `THREADOOL` waits**, at 8.6 ms per wait:
+I ran `sp_BlitzFirst` for 10 seconds during this workload, **which captured 108 `THREADPOOL` waits**, at 8.6 ms per wait:
 
     EXEC master.dbo.sp_BlitzFirst @Seconds = 10, @ExpertMode = 1;
 
