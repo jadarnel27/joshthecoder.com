@@ -53,7 +53,7 @@ We're using SSDT publish to deploy the database, so we change the data type from
     ALTER TABLE dbo.BugReport
     ALTER COLUMN SubmittedDate datetimeoffset(0) NOT NULL;
 
-*Note: we used "0" as the precision because we've never made us of the fractional seconds in our application, so truncating them was acceptable*
+*Note: we used "0" as the precision because we've never made use of the fractional seconds in our application, so truncating them was acceptable*
 
 Running the same `SELECT` as before shows us:
 
@@ -89,7 +89,7 @@ However, the **big** problem we have here is that Eastern Time isn't always -05:
 
 We have lots of historical data that crosses the DST boundary each year, and in fact crosses into the pre-2007 period before the current daylight savings rules came into effect.
 
-Dealing with this ourselves seems fraught with potential mistakes.  Fortunately, SQL Server 2016+ has an answer for us:
+Dealing with this ourselves seems fraught with potential mistakes.  Fortunately, SQL Server 2016+ has an answer for us.
 
 ### Attempt 3 - AT TIME ZONE
 
@@ -127,12 +127,12 @@ As you can see, there's a little bit of nuance to using these `datetimeoffset`-r
 
 Special thanks to Data Platform MVP Kamal Valero ([Twitter][8]) and former SQL Server user (and current disgraced Postgres user) Peter Vandivier ([Twitter][9]) for brainstorming with me when we started spinning our wheels on this thing.
 
-[1]: {{ site.url }}/assets/2020-11-09-datetime.png
-[2]: {{ site.url }}/assets/2020-11-09-datetimeoffset-utc.png
-[3]: {{ site.url }}/assets/2020-11-09-datetimeoffset-switchoffset.png
-[4]: {{ site.url }}/assets/2020-11-09-datetimeoffset-todatetimeoffset.png
-[5]: {{ site.url }}/assets/2020-11-09-datetimeoffset-attimezone-wrong.png
+[1]: {{ site.url }}/assets/2020-11-10-datetime.png
+[2]: {{ site.url }}/assets/2020-11-10-datetimeoffset-utc.png
+[3]: {{ site.url }}/assets/2020-11-10-datetimeoffset-switchoffset.png
+[4]: {{ site.url }}/assets/2020-11-10-datetimeoffset-todatetimeoffset.png
+[5]: {{ site.url }}/assets/2020-11-10-datetimeoffset-attimezone-wrong.png
 [6]: https://docs.microsoft.com/en-us/sql/t-sql/queries/at-time-zone-transact-sql?view=sql-server-ver15
-[7]: {{ site.url }}/assets/2020-11-09-datetimeoffset-attimezone-right.png
+[7]: {{ site.url }}/assets/2020-11-10-datetimeoffset-attimezone-right.png
 [8]: https://twitter.com/kamalvalero
 [9]: https://twitter.com/PeterVandivier
