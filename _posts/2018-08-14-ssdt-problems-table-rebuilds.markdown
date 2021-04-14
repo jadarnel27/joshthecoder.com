@@ -95,7 +95,9 @@ By default, SSDT sees the difference in the ordinal position of the columns and 
 
 Similar to the above, dropping a column can cause the table to rebuild the table to get the column order right.  Use the same setting to avoid this.
 
-I included renaming columns here as well, as SSDT often sees a rename as a drop and re-add.
+I included renaming columns here as well, as SSDT often sees a rename as a drop and re-add.  To avoid the drop and re-add behavior, you can rename columns inside the design pane in Visual Studio (which will update the refactorlog.xml file, used at deploy to choose the correct deployment behavior).  
+
+I tend to not use the design pane much for various reasons (I don't like the formatting and capitalization choices it makes in the generated T-SQL, and adding named constraints requires a lot of clicking and bouncing back and forth from the design pane to the T-SQL editor).  But renaming columns is a good time to use it.
 
 ### Data types / NULL-ability
 
