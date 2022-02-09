@@ -63,7 +63,7 @@ There are a couple of ways you can use parameters with the raw SQL API in EF Cor
     var query = @"
     UPDATE dbo.PostsThrowaway 
     SET Score = Score - 5
-    WHERE Body LIKE '{0}'";
+    WHERE Body LIKE {0}";
 
     var rowsAffected = context.Database.ExecuteSqlRaw(query, bodyStartsWith);
 
