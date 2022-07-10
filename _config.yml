@@ -28,6 +28,7 @@ theme: minima
 plugins_dir:
   - jekyll-feed
 google_analytics: UA-103643335-1
+google_analytics_four: G-B66B7V2RDY
 disqus:
     shortname: joshthecoder
 
