@@ -63,7 +63,7 @@ By the way, this behavior is [mentioned in the documentation for `CREATE TABLE`]
 
 If I have that exact table definition as part of an SSDT project, things can get weird.
 
-Let's say I need to remove the PK.  As demonstrated in the db<>fiddle link above, the `Id` column remains nullable after dropping the constraint using T-SQL.
+Let's say I need to remove the PK.  As demonstrated in the db<>fiddle link above, the `Id` column remains not nullable after dropping the constraint using T-SQL.
 
 But if I remove the PK from the table definition in the SSDT project, and then create a deployment script, I get this:
 
