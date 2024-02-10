@@ -142,4 +142,4 @@ As this appears to be a bug, I have filed an issue on the feedback site about it
 [5]: https://orderbyselectnull.com/
 [6]: {{ site.baseurl }}{% post_url 2018-06-29-locks-on-system-tables %}
 [7]: https://sqlperformance.com/author/paulwhitenzgmail-com
-[8]: https://feedback.azure.com/forums/908035-sql-server/suggestions/34708300-parallel-select-into-from-sys-messages-causes-intr
+[8]: https://feedback.azure.com/d365community/idea/f1ad8b0e-5f25-ec11-b6e6-000d3a4f0da0

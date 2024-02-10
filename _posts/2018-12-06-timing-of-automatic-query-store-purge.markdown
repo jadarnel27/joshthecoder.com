@@ -55,7 +55,7 @@ Here are the handful of things I discovered about the time-based automated clean
 - The data that's deleted is based on the calendar day that's X days before the current day.  In other words, it's not based on a rolling 24 hours from when the cleanup runs
   - In the example from my DBA Stack Exchange answer, you can see that the purge running on October 3rd deleted all of the Query Store data for August 3rd (my system was configured to retain 60 days of history)
 
-A bonus tidbit I learned related to the Extended Events mentioned above: they does not fire at all of there is no data to be purged.  It would be nice if this were documented somewhere.
+A bonus tidbit I learned related to the Extended Events mentioned above: these events do not fire at all of there is no data to be purged.  It would be nice if this were documented somewhere.
 
 ## In conclusion
 
