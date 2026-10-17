@@ -1,0 +1,17 @@
+---
+layout: page
+title: Archive
+permalink: /archive/
+wide: true
+---
+{%- assign posts_by_year = site.posts | group_by_exp: 'post', "post.date | date: '%Y'" -%}
+{%- for year in posts_by_year %}
+<section class="year">
+  <h2 class="year__label">{{ year.name }}</h2>
+  <ul class="rows">
+    {%- for post in year.items -%}
+      {%- include post-row.html post=post -%}
+    {%- endfor -%}
+  </ul>
+</section>
+{%- endfor %}

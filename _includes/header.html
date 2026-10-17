@@ -1,0 +1,12 @@
+{%- assign gh = site.github_username | default: 'jadarnel27' -%}
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header container">
+  <a class="brand" href="{{ '/' | relative_url }}">{{ site.console.handle | default: 'josh_the_coder' }}<span>:~$</span></a>
+  <nav class="site-nav" aria-label="Primary">
+    <a href="{{ '/about/' | relative_url }}">about</a>
+    <a href="{{ '/archive/' | relative_url }}">archive</a>
+    <a href="{{ '/topics/' | relative_url }}">topics</a>
+    <a href="{{ '/feed.xml' | relative_url }}">rss</a>
+    <a href="https://github.com/{{ gh }}">github</a>
+  </nav>
+</header>

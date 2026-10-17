@@ -1,0 +1,24 @@
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0E1319">
+
+  {%- comment -%}
+    Same <title>, description, canonical and Open Graph output as the current Minima head
+    (jekyll-seo-tag and jekyll-feed already come with your Gemfile).
+  {%- endcomment -%}
+  {%- seo -%}
+  {%- feed_meta -%}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/css/console.css' | relative_url }}">
+
+  {%- comment -%} Your existing analytics include, same condition Minima uses. {%- endcomment -%}
+  {%- if jekyll.environment == 'production' and site.google_analytics -%}
+    {%- include google-analytics.html -%}
+  {%- endif -%}
+</head>

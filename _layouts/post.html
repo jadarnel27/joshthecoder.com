@@ -1,0 +1,53 @@
+---
+layout: default
+---
+<article class="post container container--narrow h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <p class="eyebrow">
+      <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: '%b %-d, %Y' }}</time>
+      {%- if page.tags.first %} &middot;
+      <a href="{{ '/topics/' | relative_url }}#{{ page.tags.first | slugify }}">{{ page.tags.first }}</a>
+      {%- endif %}
+    </p>
+    <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
+  </header>
+
+  <div class="prose e-content" itemprop="articleBody">
+    {{ content }}
+  </div>
+
+  {%- comment -%}
+    Older on the left, newer on the right. page.previous / page.next naming has changed
+    between Jekyll versions, so decide by date instead of trusting the names.
+  {%- endcomment -%}
+  {%- assign older = page.previous -%}
+  {%- assign newer = page.next -%}
+  {%- if page.previous and page.previous.date > page.date -%}
+    {%- assign older = page.next -%}
+    {%- assign newer = page.previous -%}
+  {%- elsif page.next and page.next.date < page.date -%}
+    {%- assign older = page.next -%}
+    {%- assign newer = page.previous -%}
+  {%- endif -%}
+  <nav class="pager" aria-label="More posts">
+    {%- if older %}
+    <a class="pager__link" href="{{ older.url | relative_url }}" rel="prev">
+      <span class="pager__dir">&larr; older</span>
+      <span class="pager__title">{{ older.title | escape }}</span>
+    </a>
+    {%- endif %}
+    {%- if newer %}
+    <a class="pager__link pager__link--end" href="{{ newer.url | relative_url }}" rel="next">
+      <span class="pager__dir">newer &rarr;</span>
+      <span class="pager__title">{{ newer.title | escape }}</span>
+    </a>
+    {%- endif %}
+  </nav>
+
+  {%- if site.disqus.shortname %}
+    {%- include disqus_comments.html -%}
+  {%- endif %}
+
+  <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
+</article>

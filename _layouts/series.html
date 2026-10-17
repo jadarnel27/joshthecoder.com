@@ -1,17 +1,26 @@
 ---
 layout: post
 ---
-<div class="post-series-container" style="width: auto;float: right;border: 1px solid black;margin-left: 8px;padding: 8px;">
-    <h4>Series on {{page.tags[0]}}</h3>
-    <ul style="margin-bottom: 0;">
-        {% for post in site.posts %}
-        {% if post.tags[0] == page.tags[0] %}
-          <li>
-            <a href="{{ post.url }}">{{ post.title }}</a>
-          </li>
-        {% endif %}
-        {% endfor %}
-    </ul>
-</div>
+{%- comment -%}
+  Same behaviour as your existing series layout (posts that share the first tag), restyled.
+  It's the post layout plus a floating box; the box is injected before the post body.
+{%- endcomment -%}
+{%- assign series_name = page.tags[0] -%}
+<aside class="series-box" aria-label="Series">
+  <h2 class="series-box__title">Series on {{ series_name | escape }}</h2>
+  <ul class="series-box__list">
+    {%- for p in site.posts reversed -%}
+      {%- if p.tags[0] == series_name -%}
+      <li{% if p.url == page.url %} class="is-current" aria-current="page"{% endif %}>
+        {%- if p.url == page.url -%}
+          {{ p.title | escape }}
+        {%- else -%}
+          <a href="{{ p.url | relative_url }}">{{ p.title | escape }}</a>
+        {%- endif -%}
+      </li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+</aside>
 
 {{ content }}

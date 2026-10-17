@@ -1,0 +1,22 @@
+---
+layout: page
+title: Topics
+permalink: /topics/
+wide: true
+---
+{%- comment -%} Alphabetical tag names (split + sort_natural works on every Jekyll/Liquid version). {%- endcomment -%}
+{%- capture tag_blob -%}{%- for t in site.tags -%}{{ t[0] }}|{%- endfor -%}{%- endcapture -%}
+{%- assign tag_names = tag_blob | split: '|' | sort_natural -%}
+{%- if tag_names.size == 0 %}
+<p>No tagged posts yet. Add <code>tags: [Some Topic]</code> to a post's front matter and it will show up here.</p>
+{%- endif %}
+{%- for name in tag_names %}
+<section class="year" id="{{ name | slugify }}">
+  <h2 class="year__label">{{ name }}</h2>
+  <ul class="rows">
+    {%- for post in site.tags[name] -%}
+      {%- include post-row.html post=post hide_tag=true -%}
+    {%- endfor -%}
+  </ul>
+</section>
+{%- endfor %}

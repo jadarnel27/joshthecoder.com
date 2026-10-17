@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: 'en' }}">
+{%- include head.html -%}
+{%- comment -%}
+  The code backdrop shows on the home page and other pages by default, but not on posts
+  (long reading shouldn't compete with faint code). Override per page with
+  `backdrop: true` or `backdrop: false` in front matter.
+{%- endcomment -%}
+{%- assign show_backdrop = true -%}
+{%- if page.layout == 'post' or page.layout == 'series' -%}{%- assign show_backdrop = false -%}{%- endif -%}
+{%- if page.backdrop == true -%}{%- assign show_backdrop = true -%}{%- endif -%}
+{%- if page.backdrop == false -%}{%- assign show_backdrop = false -%}{%- endif -%}
+<body>
+  <div class="page-wrap">
+    {%- if show_backdrop -%}
+      {%- include code-backdrop.html -%}
+    {%- endif -%}
+    <div class="page-content">
+      {%- include header.html -%}
+      <main id="main" class="site-main">
+        {{ content }}
+      </main>
+      {%- include footer.html -%}
+    </div>
+  </div>
+</body>
+</html>

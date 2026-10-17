@@ -1,0 +1,91 @@
+{%- comment -%}
+  The faded "compiles upward" backdrop: binary -> x86-64 -> C -> C# -> T-SQL.
+  - The binary is the site tagline ("This blog is mostly about code, but also about other
+    stuff! Josh the Coder.") as 8-bit ASCII. If you change the tagline and want the binary to
+    match, regenerate it (see README).
+  - Every other band is the same function, add(2, 3), written in that language.
+  - Purely decorative: aria-hidden, no pointer events, hidden in print.
+  Intensity: --code-opacity in console.css (set it to 0 to switch the backdrop off).
+{%- endcomment -%}
+<div class="backdrop" aria-hidden="true">
+
+  <div class="backdrop__band">
+    <div class="backdrop__inner">
+<pre class="backdrop__code tb">01010100 01101000 01101001 01110011 00100000 01100010 01101100 01101111 01100111 00100000 01101001 01110011 00100000 01101101
+01101111 01110011 01110100 01101100 01111001 00100000 01100001 01100010 01101111 01110101 01110100 00100000 01100011 01101111
+01100100 01100101 00101100 00100000 01100010 01110101 01110100 00100000 01100001 01101100 01110011 01101111 00100000 01100001
+01100010 01101111 01110101 01110100 00100000 01101111 01110100 01101000 01100101 01110010 00100000 01110011 01110100 01110101
+01100110 01100110 00100001 00100000 01001010 01101111 01110011 01101000 00100000 01110100 01101000 01100101 00100000 01000011
+01101111 01100100 01100101 01110010 00101110 00100000 01010100 01101000 01101001 01110011 00100000 01100010 01101100 01101111
+01100111 00100000 01101001 01110011 00100000 01101101 01101111 01110011 01110100 01101100 01111001 00100000 01100001 01100010
+01101111 01110101 01110100 00100000 01100011 01101111 01100100 01100101 00101100 00100000 01100010 01110101 01110100 00100000
+01100001 01101100 01110011 01101111 00100000 01100001 01100010 01101111 01110101 01110100 00100000 01101111 01110100 01101000
+01100101 01110010 00100000 01110011 01110100 01110101 01100110 01100110 00100001 00100000 01001010 01101111 01110011 01101000
+00100000 01110100 01101000 01100101 00100000 01000011 01101111 01100100 01100101 01110010 00101110 00100000</pre>
+    </div>
+  </div>
+
+  <div class="backdrop__band backdrop__band--end">
+    <div class="backdrop__inner">
+<pre class="backdrop__code"><span class="tc">; int add(int a, int b)   [x86-64]</span>
+<span class="tn">0000</span>  <span class="tk">55          </span>push rbp
+<span class="tn">0001</span>  <span class="tk">48 89 e5    </span>mov  rbp, rsp
+<span class="tn">0004</span>  <span class="tk">89 7d fc    </span>mov  DWORD PTR [rbp-4], edi
+<span class="tn">0007</span>  <span class="tk">89 75 f8    </span>mov  DWORD PTR [rbp-8], esi
+<span class="tn">000a</span>  <span class="tk">8b 55 fc    </span>mov  edx, DWORD PTR [rbp-4]
+<span class="tn">000d</span>  <span class="tk">8b 45 f8    </span>mov  eax, DWORD PTR [rbp-8]
+<span class="tn">0010</span>  <span class="tk">01 d0       </span>add  eax, edx
+<span class="tn">0012</span>  <span class="tk">5d          </span>pop  rbp
+<span class="tn">0013</span>  <span class="tk">c3          </span>ret</pre>
+    </div>
+  </div>
+
+  <div class="backdrop__band">
+    <div class="backdrop__inner">
+<pre class="backdrop__code"><span class="tc">/* the same idea, in C */</span>
+<span class="tk">#include</span> <span class="ts">&lt;stdio.h&gt;</span>
+
+<span class="tt">int</span> add(<span class="tt">int</span> a, <span class="tt">int</span> b) {
+    <span class="tk">return</span> a + b;
+}
+
+<span class="tt">int</span> main(<span class="tt">void</span>) {
+    printf(<span class="ts">"%d\n"</span>, add(<span class="tn">2</span>, <span class="tn">3</span>));
+    <span class="tk">return</span> <span class="tn">0</span>;
+}</pre>
+    </div>
+  </div>
+
+  <div class="backdrop__band backdrop__band--end">
+    <div class="backdrop__inner">
+<pre class="backdrop__code"><span class="tc">// the same idea, in C#</span>
+<span class="tk">using</span> System;
+
+<span class="tk">public static class</span> <span class="tt">Program</span>
+{
+    <span class="tk">static</span> <span class="tt">int</span> Add(<span class="tt">int</span> a, <span class="tt">int</span> b) =&gt; a + b;
+
+    <span class="tk">public static void</span> Main()
+    {
+        Console.WriteLine(Add(<span class="tn">2</span>, <span class="tn">3</span>));
+    }
+}</pre>
+    </div>
+  </div>
+
+  <div class="backdrop__band">
+    <div class="backdrop__inner">
+<pre class="backdrop__code"><span class="tc">-- and finally, T-SQL</span>
+<span class="tk">CREATE FUNCTION</span> dbo.Add (<span class="tn">@a</span> <span class="tt">INT</span>, <span class="tn">@b</span> <span class="tt">INT</span>)
+<span class="tk">RETURNS</span> <span class="tt">INT</span>
+<span class="tk">AS</span>
+<span class="tk">BEGIN</span>
+    <span class="tk">RETURN</span> <span class="tn">@a</span> + <span class="tn">@b</span>;
+<span class="tk">END</span>;
+<span class="tk">GO</span>
+
+<span class="tk">SELECT</span> dbo.Add(<span class="tn">2</span>, <span class="tn">3</span>) <span class="tk">AS</span> Result;</pre>
+    </div>
+  </div>
+
+</div>

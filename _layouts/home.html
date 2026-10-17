@@ -1,0 +1,67 @@
+---
+layout: default
+---
+{%- assign gh = site.github_username | default: 'jadarnel27' -%}
+{%- assign tw = site.twitter_username | default: 'josh_the_coder' -%}
+{%- assign home_count = site.console.home_posts | default: 12 -%}
+
+<section class="hero container">
+  <div class="hero__copy">
+    <p class="eyebrow">// writing since {{ site.posts.last.date | date: '%Y' }}</p>
+    <h1 class="hero__title">{{ site.title | escape }}</h1>
+    <p class="hero__lede">{{ site.description | strip | escape }}</p>
+    <div class="btn-row">
+      <a class="btn btn--primary" href="{{ '/archive/' | relative_url }}">Run the archive</a>
+      <a class="btn btn--ghost" href="{{ '/feed.xml' | relative_url }}">Subscribe via RSS</a>
+    </div>
+  </div>
+
+  <div class="editor" aria-hidden="true">
+    <div class="editor__bar">
+      <span class="editor__dot"></span><span class="editor__dot"></span><span class="editor__dot"></span>
+      <span class="editor__file">blog.sql</span>
+    </div>
+<pre class="editor__code"><span class="tc">-- what is this place?</span>
+<span class="tk">SELECT</span> *
+<span class="tk">FROM</span>   blog
+<span class="tk">WHERE</span>  topic = <span class="ts">'code'</span>
+   <span class="tk">OR</span>  topic = <span class="ts">'other stuff'</span>;</pre>
+  </div>
+</section>
+
+<section class="layout container">
+  <div class="layout__main">
+    <h2 class="label">-- latest posts</h2>
+    <ul class="rows">
+      {%- for post in site.posts limit: home_count -%}
+        {%- include post-row.html post=post -%}
+      {%- endfor -%}
+    </ul>
+    <a class="more-link" href="{{ '/archive/' | relative_url }}">SELECT * FROM archive; &rarr;</a>
+  </div>
+
+  <aside class="layout__side">
+    {%- comment -%} Alphabetical tag names (split + sort_natural works on every Jekyll/Liquid version). {%- endcomment -%}
+    {%- capture tag_blob -%}{%- for t in site.tags -%}{{ t[0] }}|{%- endfor -%}{%- endcapture -%}
+    {%- assign tag_names = tag_blob | split: '|' | sort_natural -%}
+    {%- if tag_names.size > 0 %}
+    <div>
+      <h2 class="label">-- topics</h2>
+      <div class="chips">
+        {%- for name in tag_names %}
+        <a class="chip" href="{{ '/topics/' | relative_url }}#{{ name | slugify }}">{{ name }}</a>
+        {%- endfor %}
+      </div>
+    </div>
+    {%- endif %}
+
+    <div>
+      <h2 class="label">-- elsewhere</h2>
+      <div class="side-links">
+        <a href="https://github.com/{{ gh }}">github.com/{{ gh }}</a>
+        <a href="https://twitter.com/{{ tw }}">@{{ tw }}</a>
+        <a href="{{ '/feed.xml' | relative_url }}">feed.xml</a>
+      </div>
+    </div>
+  </aside>
+</section>

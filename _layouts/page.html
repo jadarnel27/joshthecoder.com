@@ -1,0 +1,14 @@
+---
+layout: default
+---
+{%- comment -%} Add `wide: true` to a page's front matter to use the full 1120px column (archive and topics do). {%- endcomment -%}
+<article class="page container{% unless page.wide %} container--narrow{% endunless %}">
+  <header class="post-header">
+    <p class="eyebrow">// {{ page.title | downcase | escape }}</p>
+    <h1 class="post-title">{{ page.title | escape }}</h1>
+  </header>
+
+  <div class="prose">
+    {{ content }}
+  </div>
+</article>

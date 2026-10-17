@@ -1,0 +1,12 @@
+{%- comment -%}
+  One row in a post list. Usage: {% include post-row.html post=post %}
+  Shows the post's first tag (if any) as a pill linking to its section on /topics/.
+{%- endcomment -%}
+{%- assign row_tag = include.post.tags | first -%}
+<li class="row">
+  <time class="row__date" datetime="{{ include.post.date | date_to_xmlschema }}">{{ include.post.date | date: '%b %-d, %Y' }}</time>
+  <a class="row__title" href="{{ include.post.url | relative_url }}">{{ include.post.title | escape }}</a>
+  {%- if row_tag and include.hide_tag != true %}
+  <a class="tag" href="{{ '/topics/' | relative_url }}#{{ row_tag | slugify }}">{{ row_tag }}</a>
+  {%- endif %}
+</li>
