@@ -21,8 +21,8 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ '/assets/css/console.css' | relative_url }}">
 
-  {%- comment -%} Your existing analytics include, same condition Minima uses. {%- endcomment -%}
-  {%- if jekyll.environment == 'production' and site.google_analytics -%}
+  {%- comment -%} Google Analytics 4, production builds only. {%- endcomment -%}
+  {%- if jekyll.environment == 'production' and site.google_analytics_four -%}
     {%- include google-analytics.html -%}
   {%- endif -%}
 </head>
