@@ -2,6 +2,7 @@
 layout: post
 title:  "Timing of the Automatic Query Store Purge"
 categories: 
+tags: [Query Store]
 ---
 
 ## Keeping things tidy

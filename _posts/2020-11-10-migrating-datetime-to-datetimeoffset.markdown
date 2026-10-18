@@ -2,7 +2,7 @@
 layout: post
 title:  "Migrating datetime to datetimeoffset"
 categories: 
-tags: 
+tags: [Database Design]
 ---
 
 I was working with a colleague to change some `datetime` columns to `datetimeoffset` recently, and the details turned out to be trickier than I expected.

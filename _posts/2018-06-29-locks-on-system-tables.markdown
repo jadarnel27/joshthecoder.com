@@ -3,6 +3,7 @@ layout: post
 title:  "Locks on System Tables"
 date:   2018-06-29 08:20:00 -0400
 categories: 
+tags: [Deadlocks]
 ---
 
 I was working with an ETL process recently, and noticed that an unrelated monitoring query was blocked for a while by this process.

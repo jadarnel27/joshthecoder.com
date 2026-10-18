@@ -2,7 +2,7 @@
 layout: post
 title:  "Max Data Types in ASP.NET Core Identity Schema"
 categories: 
-tags: 
+tags: [Database Design]
 ---
 
 I have been working on some ASP.NET Core web applications recently that use [the Identity APIs][1] for user management, email confirmation, etc.  I noticed that the default "Users" table, which is produced by Entity Framework migrations, has some odd choices for column sizes.  Since it kind of stinks to be stuck with bad defaults from the framework, I thought I'd write up how to improve this in your new projects that use Identity.

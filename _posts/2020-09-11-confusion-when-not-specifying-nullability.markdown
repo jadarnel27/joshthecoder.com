@@ -2,7 +2,7 @@
 layout: post
 title:  "Confusion When Not Specifying Nullability"
 categories: 
-tags: 
+tags: [Database Design]
 ---
 
 I always indicate whether a column allows `NULL` or not in `CREATE TABLE` and `ALTER TABLE` statements.

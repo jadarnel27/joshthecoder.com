@@ -2,7 +2,7 @@
 layout: post
 title:  "A Bug with AG Health Checks"
 categories: 
-tags: 
+tags: [Availability Groups]
 ---
 
 <style type="text/css">

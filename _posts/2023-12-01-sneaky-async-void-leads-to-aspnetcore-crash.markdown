@@ -2,7 +2,7 @@
 layout: post
 title:  "Sneaky async void Leads to ASP.NET Core Crash"
 categories: 
-tags: 
+tags: [Debugging]
 ---
 
 I had a production issue at work recently where an ASP.NET Core application would crash periodically.  It was a fairly tricky issue because it appeared to be crashing due to an unhandled exception in a Controller method - which shouldn't crash the app pool, it should be handled by ASP.NET Core and return an error to the browser.

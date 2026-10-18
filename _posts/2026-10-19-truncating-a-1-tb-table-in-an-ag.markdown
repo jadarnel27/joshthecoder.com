@@ -2,7 +2,7 @@
 layout: post
 title:  "Truncating a 1 TB Table in an Availability Group"
 categories: 
-tags: 
+tags: [Availability Groups]
 ---
 
 Years ago, I read a Q&A about the consequences (in terms of latency, log backups, etc.) of truncating a table with billions of rows in an Availability Group.  I even wrote my own A to the Q with some measurements, although there was no AG involved in my test.  Anyway, I was recently reminded of all that, and realized that AI might make it a lot easier to just test and see what happens.

@@ -2,6 +2,7 @@
 layout: post
 title:  "Manually Clearing the Query Store"
 categories: 
+tags: [Query Store]
 ---
 I came across some interesting information about manually clearing the Query Store while looking into a [question on Database Administrators Stack Exchange][1], and thought it might be worth documenting here on the blog as well.
 

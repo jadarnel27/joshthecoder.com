@@ -2,7 +2,7 @@
 layout: post
 title:  "TransactionScope Considered Annoying"
 categories: 
-tags: 
+tags: [.NET]
 ---
 
 If I want to follow documented best practices, and keep my .NET transaction management simple, I'm going to use the `TransactionScope` class:

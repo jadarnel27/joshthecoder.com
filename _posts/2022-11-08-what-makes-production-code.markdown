@@ -2,7 +2,7 @@
 layout: post
 title:  "What Makes Production Code?"
 categories: 
-tags: 
+tags: [Other Stuff]
 ---
 
 This month's T-SQL Tuesday [invitation from Tom Zíka][2] caught my eye.  

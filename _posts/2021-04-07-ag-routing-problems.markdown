@@ -2,7 +2,7 @@
 layout: post
 title:  "AG Routing Problems"
 categories: 
-tags: 
+tags: [Availability Groups]
 ---
 
 I was setting up a home lab environment for Availability Groups recently, and ran into this error while creating the listener:

@@ -2,7 +2,7 @@
 layout: post
 title:  "Can You Fail To Spill To tempdb?"
 categories: 
-tags: 
+tags: [tempdb]
 ---
 
 One of my colleagues reached out to me recently about a production issue where a SQL Server Agent job had failed with this error message:

@@ -2,7 +2,7 @@
 layout: post
 title:  "CXCONSUMER As a Sign of Slow Parallel Joins"
 categories: 
-tags: 
+tags: [Query Performance]
 ---
 
 <style type="text/css">

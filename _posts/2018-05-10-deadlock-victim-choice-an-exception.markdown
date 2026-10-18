@@ -3,6 +3,7 @@ layout: post
 title:  "Deadlock Victim Choice in SQL Server - An Exception?"
 date:   2018-05-10 15:46:00 -0400
 categories: 
+tags: [Deadlocks]
 ---
 ## How are deadlock victims chosen?
 When a deadlock occurs in SQL Server, a "victim" is chosen based on two main 

@@ -2,7 +2,7 @@
 layout: post
 title:  "SQL Saturday Atlanta in Review"
 categories: 
-tags: 
+tags: [Talks]
 ---
 
 <style type="text/css">

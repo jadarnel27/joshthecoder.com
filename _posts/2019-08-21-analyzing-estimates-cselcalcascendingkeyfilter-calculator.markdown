@@ -2,7 +2,7 @@
 layout: post
 title:  "Analyzing Estimates from the CSelCalcAscendingKeyFilter Calculator"
 categories: 
-tags: 
+tags: [Query Performance]
 ---
 
 Recently, I got curious about how estimates work outside of the histogram range - basically, where data has changed after statistics have been created, but before they've changed enough to trigger a statistics update.

@@ -2,6 +2,7 @@
 layout: post
 title:  "What Does the sql_exit_invoked XE Mean?"
 categories: 
+tags: [Internals]
 ---
 
 ## I Like Extended Events

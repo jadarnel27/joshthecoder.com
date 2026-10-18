@@ -2,7 +2,7 @@
 layout: post
 title:  "Unusual THREADPOOL Waits"
 categories: 
-tags: 
+tags: [Internals]
 ---
 
 I occasionally see (usually brief) `THREADPOOL` waits on systems that are really not all that heavily loaded.  This is my investigation into why.  Some might say I have too much time on my hands.

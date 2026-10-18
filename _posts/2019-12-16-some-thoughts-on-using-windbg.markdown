@@ -2,7 +2,7 @@
 layout: post
 title:  "Some Thoughts on Using WinDbg"
 categories: 
-tags: 
+tags: [Debugging]
 ---
 
 This is going to be a weird post.

@@ -2,7 +2,7 @@
 layout: post
 title:  "Prevent Unexpected Failovers When Patching AGs"
 categories: 
-tags: 
+tags: [Availability Groups]
 ---
 
 <style type="text/css">

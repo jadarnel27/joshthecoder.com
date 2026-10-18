@@ -3,6 +3,7 @@ layout: post
 title:  "Setting Up a New Blog with Jekyll on Windows"
 date:   2017-07-25 14:58:52 -0400
 categories: 
+tags: [Other Stuff]
 ---
 As I ponder what to write on this blog, it occurs to me that the topic of 
 how to set up a blog with Jekyll on Windows is fresh on my mind.  So, at the 

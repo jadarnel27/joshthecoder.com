@@ -2,7 +2,7 @@
 layout: post
 title:  "My (Mostly Technical) Podcast Recommendations"
 categories: 
-tags: 
+tags: [Other Stuff]
 ---
 
 I run a lot - for exercise, and because I enjoy it.  Despite my enjoyment of the task, running for an hour or more can get a little...tedious.

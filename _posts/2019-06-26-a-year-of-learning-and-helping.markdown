@@ -2,7 +2,7 @@
 layout: post
 title:  "A Year of Learning and Helping"
 categories: 
-tags: 
+tags: [Other Stuff]
 ---
 
 I enjoy posting answers on [Database Administrators Stack Exchange][1], which is a Q&A site that sits alongside Stack Overflow in the Stack Exchange family of sites.  I recently hit a milestone: I've posted 200 answers there over the last 14 months

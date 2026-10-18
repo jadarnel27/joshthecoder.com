@@ -2,6 +2,7 @@
 layout: post
 title:  "Writes During SELECT Queries - Auto Stats Update"
 categories: 
+tags: [Query Performance]
 ---
 
 ## Seeing Things

@@ -2,7 +2,7 @@
 layout: post
 title:  "Invisible tempdb Killer"
 categories: 
-tags: 
+tags: [tempdb]
 ---
 
 Let's say you are informed that tempdb is getting hammered on a production SQL Server instance (in the "lots of reads and writes" sense, not the "lots of shots of tequila" sense), and it's disrupting other workloads on the system.  You may have found this out through the power of monitoring (tempdb files are growing or full), or your favorite DMV queries, or just from being really smart.

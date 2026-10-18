@@ -2,7 +2,7 @@
 layout: post
 title:  "My Session at New Stars of Data 2021"
 categories: 
-tags: 
+tags: [Talks]
 ---
 
 I had the privilege of presenting at the virtual [New Stars of Data 2021 conference][1] last week.  The conference organizers recently uploaded all of the sessions to YouTube, so I thought I'd post the link here in case any folks following this blog want to check it out.

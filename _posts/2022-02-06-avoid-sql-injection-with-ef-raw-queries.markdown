@@ -2,7 +2,7 @@
 layout: post
 title:  "Avoid SQL Injection with EF Raw Queries"
 categories: 
-tags: 
+tags: [.NET]
 ---
 
 This blog post is mostly a PSA for developers using Entity Framework in The Modern Era.  Because no one reads the documentation.

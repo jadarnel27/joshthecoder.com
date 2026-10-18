@@ -2,6 +2,7 @@
 layout: post
 title:  "Troubleshooting an AG Failure"
 categories: 
+tags: [Availability Groups]
 ---
 I'm going to go a little outside my comfort zone and talk about Windows Server Failover Clustering (WSFC) settings.
 

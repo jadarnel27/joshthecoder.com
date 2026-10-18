@@ -2,7 +2,7 @@
 layout: post
 title:  "RESOURCE_GOVERNOR_IDLE in Azure"
 categories: 
-tags: 
+tags: [Azure]
 ---
 
 Occasionally, you might see a query running on Azure SQL Database run inexplicably slowly.  I've seen a couple of questions on Database Administrators Stack Exchange recently that started out this way ([one][1], [two][2]), so I thought it would be worthwhile to blog about it here.

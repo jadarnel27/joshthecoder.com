@@ -2,7 +2,7 @@
 layout: post
 title:  "Version Store Usage for ONLINE Column Operations"
 categories: 
-tags: 
+tags: [tempdb]
 ---
 
 In SQL Server 2016, the `WITH (ONLINE = ON)` option was added to `ALTER TABLE...ALTER COLUMN` statements.  [The documentation][1] states the purpose of this pretty nicely:

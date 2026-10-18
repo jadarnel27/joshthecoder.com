@@ -3,6 +3,7 @@ layout: post
 title:  "Mysterious Parallel Deadlock"
 date:   2018-07-05 07:00:00 -0400
 categories: 
+tags: [Deadlocks]
 ---
 ## The Problem
 I was working on demo code for [a previous post][6], and noticed that this query consistently deadlocked with itself:

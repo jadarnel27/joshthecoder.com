@@ -2,7 +2,7 @@
 layout: post
 title:  "Extract Numbers from a String using SQLCLR"
 categories: 
-tags: 
+tags: [.NET]
 ---
 
 I saw an interesting question from Erik Darling ([b][1] \| [t][2]) on the TopAnswers Q&A platform recently:

@@ -2,7 +2,7 @@
 layout: post
 title:  "SQL Server Options in Azure"
 categories: 
-tags: 
+tags: [Azure]
 ---
 
 <style type="text/css">

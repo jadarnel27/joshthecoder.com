@@ -2,7 +2,7 @@
 layout: post
 title:  "Preventable MARS Connection Leaks"
 categories: 
-tags: 
+tags: [.NET]
 ---
 
 I recently looked at a SQL Server instance that had a large number of MARS connections under a single "parent" connection.  Most of these "child" connections had been idle for quite a while, but they were still hanging around.

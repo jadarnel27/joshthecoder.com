@@ -2,7 +2,7 @@
 layout: post
 title:  "A Parallel Nested Loops Join Optimization"
 categories: 
-tags: 
+tags: [Query Performance]
 ---
 
 ## How a Parallel Loop Join Usually Works

@@ -2,6 +2,7 @@
 layout: post
 title:  "The Case of the Missing Predicate"
 categories: 
+tags: [Query Performance]
 ---
 
 ## Some Innocuous Queries

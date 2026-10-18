@@ -2,7 +2,7 @@
 layout: post
 title:  "Putting Files in a Database"
 categories: 
-tags: 
+tags: [Database Design]
 ---
 
 I think this is my first time participating in T-SQL Tuesday, but this month's [invitation from Deborah Melkin][2] was too tempting to pass up.

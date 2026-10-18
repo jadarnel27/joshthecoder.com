@@ -3,6 +3,7 @@ layout: post
 title:  "Feature Request: Explain Why Indexes Were Skipped"
 date:   2018-06-21 20:22:00 -0400
 categories: 
+tags: [Query Performance]
 ---
 
 ## Inciting incident

@@ -2,7 +2,7 @@
 layout: post
 title:  "Using PerfView to Diagnose High CPU in an ASP.NET App"
 categories: 
-tags: 
+tags: [Debugging]
 ---
 
 At work, I was recently faced with a puzzling issue with an ASP.NET application in a non-prod environment, and [PerfView][1] was critical in tracking down the problem.

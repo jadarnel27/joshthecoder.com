@@ -2,7 +2,7 @@
 layout: post
 title:  "Stats I/O: Not as Precise as You Think"
 categories: 
-tags: 
+tags: [Query Performance]
 ---
 
 The output from `SET STATISTICS IO ON` can be really helpful.  Here's the opening blurb from [the docs page][1]:

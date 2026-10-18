@@ -2,7 +2,7 @@
 layout: post
 title:  "Transactions Don't Start At BEGIN TRAN"
 categories: 
-tags: 
+tags: [Internals]
 ---
 
 I was a fly on the wall recently while some folks were troubleshooting a stored procedure, and one them made the statement that "transactions don't start until you do something that needs a transaction."  I had never heard this before, and thought it was interesting.  Intuitively, I would expect a transaction to begin as soon as the `BEGIN TRAN` statement is executed.
