@@ -366,6 +366,13 @@ div.highlighter-rouge, figure.highlight { margin: 0 0 1.5em; }
 .pager__dir { font: 400 12px var(--mono); color: var(--muted); }
 .pager__title { font-weight: 500; line-height: 1.35; color: var(--text-strong); }
 
+/* Disqus comments. The page is color-scheme: dark but Disqus's iframe isn't, and browsers paint
+   an opaque white backdrop behind iframes whose scheme doesn't match. "light" matches the iframe,
+   keeping it transparent; Disqus then picks its dark theme from our light text color.
+   Recommendations is a separate iframe that Disqus inserts as a sibling of #disqus_thread. */
+#disqus_thread, #disqus_recommendations { color-scheme: light; }
+#disqus_thread { margin-top: 48px; }
+
 /* ---------- small screens ---------- */
 
 @media (max-width: 640px) {
@@ -382,7 +389,7 @@ div.highlighter-rouge, figure.highlight { margin: 0 0 1.5em; }
 
 @media print {
   body { background: #fff; color: #000; }
-  .backdrop, .site-nav, .skip-link, .pager, .btn-row, #disqus_thread,
+  .backdrop, .site-nav, .skip-link, .pager, .btn-row, #disqus_thread, #disqus_recommendations,
   .editor-closed, .editor-dock, .editor-scrim { display: none !important; }
   a, .prose a { color: #000; text-decoration: underline; }
   .prose, .post-title, .prose h2, .prose h3, .prose h4, .eyebrow { color: #000; }
