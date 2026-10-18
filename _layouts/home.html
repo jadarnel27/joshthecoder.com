@@ -7,7 +7,7 @@ layout: default
 
 <section class="hero container">
   <div class="hero__copy">
-    <p class="eyebrow">// writing since {{ site.posts.last.date | date: '%Y' }}</p>
+    <p class="eyebrow">/* writing since {{ site.posts.last.date | date: '%Y' }} */</p>
     <h1 class="hero__title">{{ site.title | escape }}</h1>
     <p class="hero__lede">{{ site.description | strip | escape }}</p>
     <div class="btn-row">
@@ -18,20 +18,22 @@ layout: default
 
   <div class="editor" aria-hidden="true">
     <div class="editor__bar">
-      <span class="editor__dot"></span><span class="editor__dot"></span><span class="editor__dot"></span>
+      <span class="editor__lights"><span class="editor__dot editor__dot--close"></span><span class="editor__dot editor__dot--min"></span><span class="editor__dot editor__dot--max"></span></span>
       <span class="editor__file">blog.sql</span>
     </div>
-<pre class="editor__code"><span class="tc">-- what is this place?</span>
-<span class="tk">SELECT</span> *
-<span class="tk">FROM</span>   blog
-<span class="tk">WHERE</span>  topic = <span class="ts">'code'</span>
-   <span class="tk">OR</span>  topic = <span class="ts">'other stuff'</span>;</pre>
+<pre class="editor__code"><span class="tc">/* what is this place? */</span>
+<span class="tk">SELECT</span>
+   b.*
+<span class="tk">FROM</span> blog b
+<span class="tk">WHERE</span>
+   b.topic = <span class="ts">'code'</span>
+   <span class="tk">OR</span> b.topic = <span class="ts">'other stuff'</span>;</pre>
   </div>
 </section>
 
 <section class="layout container">
   <div class="layout__main">
-    <h2 class="label">-- latest posts</h2>
+    <h2 class="label">/* latest posts */</h2>
     <ul class="rows">
       {%- for post in site.posts limit: home_count -%}
         {%- include post-row.html post=post -%}
@@ -46,7 +48,7 @@ layout: default
     {%- assign tag_names = tag_blob | split: '|' | sort_natural -%}
     {%- if tag_names.size > 0 %}
     <div>
-      <h2 class="label">-- topics</h2>
+      <h2 class="label">/* topics */</h2>
       <div class="chips">
         {%- for name in tag_names %}
         <a class="chip" href="{{ '/topics/' | relative_url }}#{{ name | slugify }}">{{ name }}</a>
@@ -56,7 +58,7 @@ layout: default
     {%- endif %}
 
     <div>
-      <h2 class="label">-- elsewhere</h2>
+      <h2 class="label">/* elsewhere */</h2>
       <div class="side-links">
         <a href="https://github.com/{{ gh }}">github.com/{{ gh }}</a>
         <a href="https://twitter.com/{{ tw }}">@{{ tw }}</a>
