@@ -143,8 +143,47 @@ img { max-width: 100%; height: auto; }
 
 /* the little "blog.sql" editor window */
 .editor {
-  flex: 1 1 420px; min-width: 0; overflow: hidden;
+  min-width: 0; overflow: hidden;
   background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+}
+
+/* The window and its stand-ins (closed note, dock tile) share one grid cell, so closing or
+   minimizing the window doesn't make the hero jump. data-state is set by editor-window.js. */
+.editor-slot { flex: 1 1 420px; min-width: 0; display: grid; }
+.editor-slot > .editor, .editor-closed, .editor-dock { grid-area: 1 / 1; }
+.editor-closed, .editor-dock, .editor-scrim { display: none; }
+
+.editor-slot[data-state="closed"] .editor,
+.editor-slot[data-state="minimized"] .editor { visibility: hidden; }
+
+.editor-slot[data-state="closed"] .editor-closed {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  border: 1px dashed var(--line); border-radius: 12px;
+}
+.editor-closed .btn { background: none; cursor: pointer; }
+
+.editor-slot[data-state="minimized"] .editor-dock {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  align-self: end; justify-self: center; padding: 8px 10px;
+  background: none; border: 0; cursor: pointer; color: var(--muted);
+  font: 400 12px var(--mono);
+}
+.editor-dock__icon {
+  display: flex; align-items: center; justify-content: center; width: 48px; height: 48px;
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: 12px;
+  font: 700 13px var(--mono); color: var(--accent); transition: transform 0.15s ease;
+}
+.editor-dock:hover .editor-dock__icon { transform: translateY(-4px); }
+.editor-dock:hover { color: var(--text); }
+
+.editor-slot[data-state="max"] .editor {
+  position: fixed; inset: clamp(12px, 4vw, 48px); z-index: 50;
+  display: flex; flex-direction: column; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+}
+.editor-slot[data-state="max"] .editor__code { flex: 1; overflow: auto; font-size: clamp(16px, 2.2vw, 26px); }
+.editor-slot[data-state="max"] .editor-scrim {
+  display: block; position: fixed; inset: 0; z-index: 49;
+  background: rgba(5, 8, 12, 0.72); backdrop-filter: blur(2px);
 }
 .editor__bar {
   display: flex; align-items: center; gap: 8px; padding: 12px 16px;
@@ -153,9 +192,10 @@ img { max-width: 100%; height: auto; }
 /* macOS-style window buttons: grey until the group is hovered, then colored with glyphs */
 .editor__lights { display: flex; gap: 8px; }
 .editor__dot {
-  position: relative; width: 12px; height: 12px; border-radius: 50%;
+  position: relative; width: 12px; height: 12px; border-radius: 50%; padding: 0; border: 0;
   background: var(--line-strong); cursor: default; transition: background-color 0.12s ease;
 }
+.editor__dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .editor__dot::before {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
   font: 700 10px/1 var(--sans); color: rgba(0, 0, 0, 0.55); opacity: 0;
@@ -163,10 +203,10 @@ img { max-width: 100%; height: auto; }
 .editor__dot--close::before { content: "\00D7"; }
 .editor__dot--min::before { content: "\2212"; }
 .editor__dot--max::before { content: "+"; }
-.editor__lights:hover .editor__dot--close { background: #FF5F57; }
-.editor__lights:hover .editor__dot--min { background: #FEBC2E; }
-.editor__lights:hover .editor__dot--max { background: #28C840; }
-.editor__lights:hover .editor__dot::before { opacity: 1; }
+.editor__lights:is(:hover, :focus-within) .editor__dot--close { background: #FF5F57; }
+.editor__lights:is(:hover, :focus-within) .editor__dot--min { background: #FEBC2E; }
+.editor__lights:is(:hover, :focus-within) .editor__dot--max { background: #28C840; }
+.editor__lights:is(:hover, :focus-within) .editor__dot::before { opacity: 1; }
 .editor__lights .editor__dot:active { filter: brightness(0.8); }
 .editor__file { margin-left: 8px; font: 400 12px var(--mono); color: var(--muted); }
 .editor__code {
@@ -342,7 +382,8 @@ div.highlighter-rouge, figure.highlight { margin: 0 0 1.5em; }
 
 @media print {
   body { background: #fff; color: #000; }
-  .backdrop, .site-nav, .skip-link, .pager, .btn-row, #disqus_thread { display: none !important; }
+  .backdrop, .site-nav, .skip-link, .pager, .btn-row, #disqus_thread,
+  .editor-closed, .editor-dock, .editor-scrim { display: none !important; }
   a, .prose a { color: #000; text-decoration: underline; }
   .prose, .post-title, .prose h2, .prose h3, .prose h4, .eyebrow { color: #000; }
   pre, :not(pre) > code { background: #f4f4f4; color: #000; border-color: #ccc; }

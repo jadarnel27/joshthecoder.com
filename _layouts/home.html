@@ -16,12 +16,18 @@ layout: default
     </div>
   </div>
 
-  <div class="editor" aria-hidden="true">
+  {%- comment -%} The window buttons work (close / minimize / fullscreen), see assets/js/editor-window.js. {%- endcomment -%}
+  <div class="editor-slot" data-state="open">
+  <div class="editor">
     <div class="editor__bar">
-      <span class="editor__lights"><span class="editor__dot editor__dot--close"></span><span class="editor__dot editor__dot--min"></span><span class="editor__dot editor__dot--max"></span></span>
+      <span class="editor__lights">
+        <button type="button" class="editor__dot editor__dot--close" data-action="close" aria-label="Close blog.sql"></button>
+        <button type="button" class="editor__dot editor__dot--min" data-action="minimize" aria-label="Minimize blog.sql"></button>
+        <button type="button" class="editor__dot editor__dot--max" data-action="maximize" aria-label="Toggle full screen"></button>
+      </span>
       <span class="editor__file">blog.sql</span>
     </div>
-<pre class="editor__code"><span class="tc">/* what is this place? */</span>
+<pre class="editor__code" aria-hidden="true"><span class="tc">/* what is this place? */</span>
 <span class="tk">SELECT</span>
    b.*
 <span class="tk">FROM</span> blog b
@@ -29,7 +35,18 @@ layout: default
    b.topic = <span class="ts">'code'</span>
    <span class="tk">OR</span> b.topic = <span class="ts">'other stuff'</span>;</pre>
   </div>
+  <div class="editor-closed">
+    <p class="label">/* blog.sql closed */</p>
+    <button type="button" class="btn btn--ghost" data-action="open">reopen blog.sql</button>
+  </div>
+  <button type="button" class="editor-dock" data-action="restore" aria-label="Restore blog.sql">
+    <span class="editor-dock__icon" aria-hidden="true">SQL</span>
+    <span class="editor-dock__name">blog.sql</span>
+  </button>
+  <div class="editor-scrim" data-action="maximize"></div>
+  </div>
 </section>
+<script src="{{ '/assets/js/editor-window.js' | relative_url }}" defer></script>
 
 <section class="layout container">
   <div class="layout__main">
