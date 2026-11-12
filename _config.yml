@@ -21,6 +21,9 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://joshthecoder.com" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: josh_the_coder
 github_username:  jadarnel27
+# Build in Eastern time on every machine. Post dates (and so post URLs) depend on it, and GitHub's
+# build machines run on UTC: without this, a post dated 20:22 -0400 moves to the next day's URL.
+timezone: America/New_York
 
 # Build settings
 markdown: kramdown
