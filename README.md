@@ -3,7 +3,14 @@ My blog at joshthecoder.com
 
 ## Publishing
 
-The site is hosted on Cloudflare (Workers static assets). To publish, run this from WSL:
+The site is hosted on Cloudflare (Workers static assets).
+
+**Pushing to `master` publishes automatically.** GitHub Actions (`.github/workflows/deploy.yml`) runs the
+production build and deploys it, about 2 minutes after the push. Watch it under the repo's **Actions** tab.
+Pull requests are only built, not deployed, to show whether merging would break the site. The workflow needs
+the repository secret `CLOUDFLARE_API_TOKEN`.
+
+To publish by hand instead (e.g. without pushing), run this from WSL:
 
     ./deploy.sh
 

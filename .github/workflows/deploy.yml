@@ -1,0 +1,65 @@
+# Build joshthecoder.com with Jekyll and publish it to Cloudflare (Workers static assets).
+#  - Push to master (or "Run workflow" on master): production build + deploy, the same as ./deploy.sh.
+#  - Pull requests (e.g. Dependabot gem updates): build only, to show whether merging would break the site.
+#    No token is used and nothing is deployed.
+# Needs the repository secret CLOUDFLARE_API_TOKEN (a Cloudflare token that can deploy Workers).
+# Actions and wrangler are pinned to exact versions because the deploy step holds that token.
+name: Build and deploy
+
+on:
+  push:
+    branches: [master]
+    paths-ignore: ['README.md', '_drafts/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # Deploys run one at a time. A new push to a pull request cancels that PR's older check.
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('deploy-{0}', github.ref) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      # Only master deploys. Pull requests, and "Run workflow" on any other branch, just build.
+      DEPLOY: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Ruby (version from .ruby-version) and gems (cached)
+        uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
+        with:
+          bundler-cache: true
+
+      - name: Build only (no deploy)
+        if: env.DEPLOY != 'true'
+        run: sh ./build-prod.sh
+
+      - name: Set up Node (for wrangler)
+        if: env.DEPLOY == 'true'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Build and deploy to Cloudflare
+        if: env.DEPLOY == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        # wrangler.jsonc runs build-prod.sh first, then uploads _site/
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::The repository secret CLOUDFLARE_API_TOKEN is not set"; exit 1; }
+          npx --yes wrangler@4.155.0 deploy --message "GitHub Actions: commit ${GITHUB_SHA::7}"
+
+      - name: Check the live site
+        if: env.DEPLOY == 'true'
+        run: |
+          code=$(curl -s -o /dev/null --max-time 30 -w '%{http_code}' "https://joshthecoder.com/?deploy=${GITHUB_SHA::7}")
+          echo "https://joshthecoder.com/ -> $code"
+          test "$code" = 200
