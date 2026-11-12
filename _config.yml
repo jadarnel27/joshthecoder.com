@@ -46,6 +46,12 @@ exclude: [
     Gemfile, Gemfile.lock, node_modules, vendor/bundle/, # Defaults
     vendor/cache/, vendor/gems/, vendor/ruby/, # Defaults
     build-prod.sh, 
+    deploy.sh,
     README.md, 
-    serve.sh
+    serve.sh,
+    wrangler.jsonc # Cloudflare deploy config, not part of the site
   ]
+
+# Copied into _site/ even though they start with "_": Cloudflare reads them at deploy time
+# (response headers and redirects). They aren't served as pages.
+include: [_headers, _redirects]

@@ -1,0 +1,21 @@
+{
+  // joshthecoder.com is served by Cloudflare Workers static assets: an assets-only Worker with no Worker code.
+  // Publish with:  npx wrangler deploy
+  // It runs build-prod.sh first, then uploads _site/. See README.md.
+  "name": "joshthecoder",
+  "compatibility_date": "2026-10-01",
+  // Always do a production build (GA4 + Disqus) right before deploying, so the development build
+  // that serve.sh leaves in _site/ never goes live.
+  "build": { "command": "sh ./build-prod.sh" },
+  "assets": {
+    "directory": "./_site",
+    // Unknown paths get _site/404.html with a 404 status.
+    "not_found_handling": "404-page"
+  },
+  "workers_dev": false,   // no *.workers.dev copy: the site lives only on its custom domains
+  "preview_urls": false,
+  "routes": [
+    { "pattern": "joshthecoder.com", "custom_domain": true },
+    { "pattern": "www.joshthecoder.com", "custom_domain": true }
+  ]
+}

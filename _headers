@@ -1,0 +1,7 @@
+# Cloudflare response headers. Jekyll copies this file into _site/ (see "include" in _config.yml).
+# Wrangler reads it at deploy time; it isn't served as a page.
+# Lets the Dakboard display read the Running Goal widget data (carried over from the old GoDaddy .htaccess).
+/*
+  Access-Control-Allow-Origin: https://dakboard.com
+  Access-Control-Allow-Methods: GET, OPTIONS
+  Access-Control-Allow-Headers: Content-Type

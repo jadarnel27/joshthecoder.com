@@ -1,0 +1,17 @@
+# Cloudflare redirects. Jekyll copies this file into _site/ (see "include" in _config.yml).
+# Wrangler reads it at deploy time; it isn't served as a page. Format: <from> <to> <status>
+
+# The Running Goal widget (Dakboard) moved to its own site on the droplet, uploaded daily by the
+# MileageGoalTracker job (run-and-publish.cmd → SFTP). 302 so the target can move again later.
+/assets/widget.html          https://running-goal.joshthecoder.com/widget               302
+/assets/widget               https://running-goal.joshthecoder.com/widget               302
+/assets/latest_metrics.json  https://running-goal.joshthecoder.com/latest_metrics.json  302
+
+# Posts that were renamed or re-dated after being published. The old addresses stayed online on GoDaddy
+# because FTP never deleted anything. Both forms are listed: Cloudflare also served them without ".html".
+/2018/08/13/ssdt-problems-table-rebuilds.html                       /2018/08/14/ssdt-problems-table-rebuilds.html                        301
+/2018/08/13/ssdt-problems-table-rebuilds                            /2018/08/14/ssdt-problems-table-rebuilds.html                        301
+/2019/05/19/a-parallel-nested-loop-join-optimization.html           /2019/05/19/a-parallel-nested-loops-join-optimization.html           301
+/2019/05/19/a-parallel-nested-loop-join-optimization                /2019/05/19/a-parallel-nested-loops-join-optimization.html           301
+/2020/04/14/max-data-types-in-aspnet-core-identity-schema.html      /2020/04/28/max-data-types-in-aspnet-core-identity-schema.html       301
+/2020/04/14/max-data-types-in-aspnet-core-identity-schema           /2020/04/28/max-data-types-in-aspnet-core-identity-schema.html       301
